@@ -17,8 +17,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".MapApplication"
         android:allowBackup="false"
-        android:name="com.jiyouliang.fmap.MapApplication"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
@@ -26,10 +26,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.jiyouliang.fmap.ui.SplashActivity"
+        <activity
+            android:name=".ui.navi.RouteSelectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ui.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -39,7 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.jiyouliang.fmap.MapActivity"
+            android:name=".MapActivity"
             android:theme="@style/MapTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -48,31 +53,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.jiyouliang.fmap.ui.user.UserActivity"
+            android:name=".ui.user.UserActivity"
             android:theme="@style/MyTranslucentTheme"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.jiyouliang.fmap.ui.user.UserDetailActivity"
+            android:name=".ui.user.UserDetailActivity"
             android:theme="@style/MyTranslucentTheme" />
-        <activity android:name="com.jiyouliang.fmap.ui.user.LoginActivity" />
-        <activity android:name="com.jiyouliang.fmap.ui.user.UserLoginSendSmsActivity" />
+        <activity android:name=".ui.user.LoginActivity" />
+        <activity android:name=".ui.user.UserLoginSendSmsActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="995aff59b0576e1aa45d76c42702fbc8" />
+            android:value="5aa73027a81d03057d7264178bf32cef" />
 
         <service android:name="com.amap.api.location.APSService" />
 
         <activity
-            android:name="com.jiyouliang.fmap.wxapi.WXEntryActivity"
+            android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:taskAffinity="net.sourceforge.simcpux"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name="com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity"
+            android:name=".ui.navi.WalkRouteNaviActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ui.navi.DriveRouteNaviActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>

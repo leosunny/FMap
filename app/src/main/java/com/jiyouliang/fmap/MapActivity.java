@@ -1,7 +1,9 @@
 package com.jiyouliang.fmap;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +17,12 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +45,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.AMapGestureListener;
@@ -51,6 +58,7 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
+import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.LatLonSharePoint;
@@ -60,7 +68,8 @@ import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
-import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
+import com.jiyouliang.fmap.ui.navi.DriveRouteNaviActivity;
+import com.jiyouliang.fmap.ui.navi.RouteSelectActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
 import com.jiyouliang.fmap.util.DeviceUtils;
@@ -86,9 +95,10 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -182,8 +192,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        MapsInitializer.updatePrivacyShow(this,true,true);
+        MapsInitializer.updatePrivacyAgree(this,true);
         initView(savedInstanceState);
-        initData();
+        try {
+            initData();
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
         setListener();
 
     }
@@ -247,7 +263,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //        SystemUIModes.setTranslucentStatus(this, true);
     }
 
-    private void initData() {
+    private void initData() throws AMapException {
         // 通过WXAPIFactory工厂，获取IWXAPI的实例
         api = WXAPIFactory.createWXAPI(this, Constants.APP_ID, false);
         // 将应用的appId注册到微信
@@ -864,7 +880,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         // leakcanary检测
 
-
     }
 
 
@@ -963,13 +978,23 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 showToast(getString(R.string.please_select_dest_loc));
                 return;
             }
-            Intent intent = new Intent(this, WalkRouteNaviActivity.class);
+            //Intent intent = new Intent(this, WalkRouteNaviActivity.class);
+//            Intent intent = new Intent(this, DriveRouteNaviActivity.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("startLatLng", mLatLng);
+//            bundle.putParcelable("stopLatLng", mClickPoiLatLng);
+//
+//            intent.putExtra("params", bundle);
+//            startActivity(intent);
+            //进入路径选择界面
+            Intent intent = new Intent(this, RouteSelectActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable("startLatLng", mLatLng);
             bundle.putParcelable("stopLatLng", mClickPoiLatLng);
 
             intent.putExtra("params", bundle);
             startActivity(intent);
+
             return;
         }
 
@@ -1549,6 +1574,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             isPoiClick = true;
             LatLonPoint point = tip.getPoint();
             LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+            mClickPoiLatLng=latLng;
             addPOIMarderAndShowDetail(latLng, tip.getName());
             showClickPoiDetail(latLng, tip.getName());
         }

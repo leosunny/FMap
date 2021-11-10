@@ -25,7 +25,7 @@ public class WalkRouteNaviActivity extends BaseAMapNaviActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_amap_walk_navi);
+        setContentView(R.layout.activity_amap_navi);
         initView(savedInstanceState);
         initData();
 

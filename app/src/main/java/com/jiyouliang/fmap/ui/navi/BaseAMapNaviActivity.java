@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapException;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
@@ -13,7 +15,6 @@ import com.amap.api.navi.model.AMapLaneInfo;
 import com.amap.api.navi.model.AMapModelCross;
 import com.amap.api.navi.model.AMapNaviCameraInfo;
 import com.amap.api.navi.model.AMapNaviCross;
-import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.AMapNaviRouteNotifyData;
 import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
@@ -22,7 +23,6 @@ import com.amap.api.navi.model.AimLessModeCongestionInfo;
 import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
-import com.autonavi.tbt.TrafficFacilityInfo;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.LogUtil;
 
@@ -48,7 +48,11 @@ public class BaseAMapNaviActivity extends BaseActivity implements AMapNaviListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mAMapNavi = AMapNavi.getInstance(getApplicationContext());
+        try {
+            mAMapNavi = AMapNavi.getInstance(getApplicationContext());
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
         mAMapNavi.addAMapNaviListener(this);
         mAMapNavi.setUseInnerVoice(true);
 
@@ -190,11 +194,6 @@ public class BaseAMapNaviActivity extends BaseActivity implements AMapNaviListen
         //全览按钮点击回调
     }
 
-    @Deprecated
-    @Override
-    public void onNaviInfoUpdated(AMapNaviInfo naviInfo) {
-        //过时
-    }
 
     @Override
     public void updateCameraInfo(AMapNaviCameraInfo[] aMapCameraInfos) {
@@ -211,10 +210,6 @@ public class BaseAMapNaviActivity extends BaseActivity implements AMapNaviListen
         //导航过程中的信息更新，请看NaviInfo的具体说明
     }
 
-    @Override
-    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-        //已过时
-    }
 
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
@@ -348,6 +343,11 @@ public class BaseAMapNaviActivity extends BaseActivity implements AMapNaviListen
 
     @Override
     public void onNaviRouteNotify(AMapNaviRouteNotifyData aMapNaviRouteNotifyData) {
+
+    }
+
+    @Override
+    public void onGpsSignalWeak(boolean b) {
 
     }
 }
