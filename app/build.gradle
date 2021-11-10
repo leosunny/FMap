@@ -11,7 +11,7 @@ android {
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('/home/jiyouliang/.android/debug.keystore')
+            storeFile file('C:\\Users\\sunxianlei\\.android\\debug.keystore')
             storePassword 'android'
         }
     }
@@ -67,6 +67,10 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+
+    implementation 'com.amap.api:navi-3dmap:latest.integration'
+    implementation 'com.amap.api:search:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
     /*debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
                         releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
                         debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'*/
