@@ -58,8 +58,6 @@ public class RouteSelectActivity extends Activity implements AMapNaviListener {
      * 地图对象
      */
     private MapView mRouteMapView;
-    private Marker mStartMarker;
-    private Marker mEndMarker;
     private NaviLatLng endLatlng = new NaviLatLng(39.955846, 116.352765);
     private NaviLatLng startLatlng = new NaviLatLng(39.925041, 116.437901);
     private List<NaviLatLng> startList = new ArrayList<NaviLatLng>();
@@ -103,9 +101,6 @@ public class RouteSelectActivity extends Activity implements AMapNaviListener {
         mRouteMapView = (MapView) findViewById(R.id.route_select_view);
         mRouteMapView.onCreate(savedInstanceState);
         mAmap = mRouteMapView.getMap();
-        // 初始化Marker添加到地图
-        mStartMarker = mAmap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.start))));
-        mEndMarker = mAmap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.end))));
 
         try {
             mAMapNavi = AMapNavi.getInstance(getApplicationContext());
@@ -124,8 +119,6 @@ public class RouteSelectActivity extends Activity implements AMapNaviListener {
 
             startLatLng = bundle.getParcelable(KEY_STARTLATLNG);
             stopLatLng = bundle.getParcelable(KEY_STOPTLATLNG);
-            mStartMarker.setPosition(startLatLng);
-            mEndMarker.setPosition(stopLatLng);
 
             mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, 15));
         }
