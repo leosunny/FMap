@@ -58,6 +58,11 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
+import com.amap.api.navi.AmapNaviPage;
+import com.amap.api.navi.AmapNaviParams;
+import com.amap.api.navi.AmapNaviType;
+import com.amap.api.navi.INaviInfoCallback;
+import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
@@ -98,7 +103,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, INaviInfoCallback {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -987,13 +992,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //            intent.putExtra("params", bundle);
 //            startActivity(intent);
             //进入路径选择界面
-            Intent intent = new Intent(this, RouteSelectActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("startLatLng", mLatLng);
-            bundle.putParcelable("stopLatLng", mClickPoiLatLng);
+//            Intent intent = new Intent(this, RouteSelectActivity.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("startLatLng", mLatLng);
+//            bundle.putParcelable("stopLatLng", mClickPoiLatLng);
+//
+//            intent.putExtra("params", bundle);
+//            startActivity(intent);
 
-            intent.putExtra("params", bundle);
-            startActivity(intent);
+            //导航组件
+            AmapNaviParams params = new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi("目的地", mClickPoiLatLng, ""), AmapNaviType.DRIVER);
+            params.setUseInnerVoice(true);
+            AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapActivity.this);
 
             return;
         }
@@ -1580,6 +1590,106 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
     }
 
+    @Override
+    public void onInitNaviFailure() {
+
+    }
+
+    @Override
+    public void onGetNavigationText(String s) {
+
+    }
+
+    @Override
+    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+
+    }
+
+    @Override
+    public void onArriveDestination(boolean b) {
+
+    }
+
+    @Override
+    public void onStartNavi(int i) {
+
+    }
+
+    @Override
+    public void onCalculateRouteSuccess(int[] ints) {
+
+    }
+
+    @Override
+    public void onCalculateRouteFailure(int i) {
+
+    }
+
+    @Override
+    public void onStopSpeaking() {
+
+    }
+
+    @Override
+    public void onReCalculateRoute(int i) {
+
+    }
+
+    @Override
+    public void onExitPage(int i) {
+
+    }
+
+    @Override
+    public void onStrategyChanged(int i) {
+
+    }
+
+    @Override
+    public void onArrivedWayPoint(int i) {
+
+    }
+
+    @Override
+    public void onMapTypeChanged(int i) {
+
+    }
+
+    @Override
+    public void onNaviDirectionChanged(int i) {
+
+    }
+
+    @Override
+    public void onDayAndNightModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onBroadcastModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onScaleAutoChanged(boolean b) {
+
+    }
+
+    @Override
+    public View getCustomMiddleView() {
+        return null;
+    }
+
+    @Override
+    public View getCustomNaviView() {
+        return null;
+    }
+
+    @Override
+    public View getCustomNaviBottomView() {
+        return null;
+    }
+
     /**
      * 地图模式
      */
@@ -1670,5 +1780,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private boolean isGpsOpen(){
         return mLocMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
+
+
 
 }
