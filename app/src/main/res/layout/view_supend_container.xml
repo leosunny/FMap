@@ -20,7 +20,7 @@
             android:layout_marginLeft="@dimen/padding_size"
             android:layout_marginRight="@dimen/padding_size"
             android:background="@color/transparent"
-            app:layout_constraintBottom_toTopOf="@id/nearby_view"
+            app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent">
 
             <com.jiyouliang.fmap.view.map.GPSView
@@ -38,23 +38,23 @@
                 android:layout_centerInParent="true" />
 
 
-            <com.jiyouliang.fmap.view.map.FrequentView
-                android:id="@+id/fv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+<!--            <com.jiyouliang.fmap.view.map.FrequentView-->
+<!--                android:id="@+id/fv"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentRight="true"-->
+<!--                android:layout_centerVertical="true" />-->
         </RelativeLayout>
 
-        <com.jiyouliang.fmap.view.map.NearbySearchView
-            android:id="@+id/nearby_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_size"
-            android:layout_marginRight="@dimen/padding_size"
-            android:layout_marginBottom="@dimen/padding_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+<!--        <com.jiyouliang.fmap.view.map.NearbySearchView-->
+<!--            android:id="@+id/nearby_view"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="@dimen/padding_size"-->
+<!--            android:layout_marginRight="@dimen/padding_size"-->
+<!--            android:layout_marginBottom="@dimen/padding_size"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
 
 
     </LinearLayout>

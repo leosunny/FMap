@@ -118,7 +118,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private GPSView mGpsView;
-    private NearbySearchView mNearbySearcyView;
+//    private NearbySearchView mNearbySearcyView;
     private static boolean mFirstLocation = true;//第一次定位
     private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
@@ -144,7 +144,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private int mMinPeekHeight;//最小高度
     private View mPoiColseView;
     private RouteView mRouteView;
-    private FrequentView mFrequentView;
+//    private FrequentView mFrequentView;
     private PoiDetailBottomView mPoiDetailTaxi;
     private int mPadding;
     //poi detail动画时长
@@ -212,7 +212,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private void initView(Bundle savedInstanceState) {
         mGpsView = (GPSView) findViewById(R.id.gps_view);
         mRouteView = (RouteView) findViewById(R.id.route_view);
-        mFrequentView = (FrequentView) findViewById(R.id.fv);
+//        mFrequentView = (FrequentView) findViewById(R.id.fv);
         //获取地图控件引用
         mMapView = (TextureMapView) findViewById(R.id.map);
         //交通流量状态控件
@@ -225,7 +225,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView.onCreate(savedInstanceState);
 
         mGpsView.setGpsState(mCurrentGpsState);
-        mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
+//        mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
@@ -315,7 +315,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void setListener() {
         mGpsView.setOnGPSViewClickListener(this);
-        mNearbySearcyView.setOnNearbySearchViewClickListener(this);
+//        mNearbySearcyView.setOnNearbySearchViewClickListener(this);
+        mRouteView.setOnClickListener(this);
         //地图手势事件
         aMap.setAMapGestureListener(this);
         mSensorHelper = new SensorEventHelper(this);
@@ -655,6 +656,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mMoveToCenter = false;
             setLocationStyle();
             resetLocationMarker();
+            if(mClickPoiLatLng !=null){
+                mClickPoiLatLng=null;
+            }
         }
     }
 
@@ -973,6 +977,19 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        // 路线按钮点击处理
+        if(v == mRouteView){
+            if(mLatLng == null){
+                showToast(getString(R.string.location_failed_hold_on));
+                return;
+            }
+            if(mClickPoiLatLng == null){
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, null, AmapNaviType.DRIVER), MapActivity.this);
+            }else{
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi(mPoiName, mClickPoiLatLng, ""), AmapNaviType.DRIVER), MapActivity.this);
+            }
+        }
+
         // 路线,进入导航页面
         if(v == mTvRoute){
             if(mLatLng == null){
@@ -1001,7 +1018,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //            startActivity(intent);
 
             //导航组件
-            AmapNaviParams params = new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi("目的地", mClickPoiLatLng, ""), AmapNaviType.DRIVER);
+            AmapNaviParams params = new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi(mPoiName, mClickPoiLatLng, ""), AmapNaviType.DRIVER);
             params.setUseInnerVoice(true);
             AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapActivity.this);
 
@@ -1049,8 +1066,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         //gsp控件回退到原来位置、并显示底部其他控件
         mRouteView.setVisibility(View.VISIBLE);
-        mFrequentView.setVisibility(View.VISIBLE);
-        mNearbySearcyView.setVisibility(View.VISIBLE);
+//        mFrequentView.setVisibility(View.VISIBLE);
+//        mNearbySearcyView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -1064,8 +1081,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBottomSheet.setVisibility(View.VISIBLE);
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mRouteView.setVisibility(View.GONE);
-        mFrequentView.setVisibility(View.GONE);
-        mNearbySearcyView.setVisibility(View.GONE);
+//        mFrequentView.setVisibility(View.GONE);
+//        mNearbySearcyView.setVisibility(View.GONE);
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.VISIBLE);
         //我的位置
