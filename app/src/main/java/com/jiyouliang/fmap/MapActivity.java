@@ -643,7 +643,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onScroll(float v, float v1) {
         //避免重复调用闪屏，当手指up才重置为false
-        if (!onScrolling) {
+        /*if (!onScrolling) {
             onScrolling = true;
             LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
             //旋转不移动到中心点
@@ -659,7 +659,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             if(mClickPoiLatLng !=null){
                 mClickPoiLatLng=null;
             }
-        }
+        }*/
     }
 
     /**
@@ -954,6 +954,25 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mBehavior.setHideable(true);
             resetGpsButtonPosition();
             hidePoiDetail();
+
+            if (!onScrolling) {
+                onScrolling = true;
+                //LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
+                //旋转不移动到中心点
+                mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+                mCurrentGpsState = STATE_UNLOCKED;
+                //当前没有正在定位才能修改状态
+                if (!mFirstLocation) {
+                    mGpsView.setGpsState(mCurrentGpsState);
+                }
+                mMoveToCenter = false;
+                setLocationStyle();
+                resetLocationMarker();
+                if(mClickPoiLatLng !=null){
+                    mClickPoiLatLng=null;
+                }
+            }
+
             return;
         }
 
