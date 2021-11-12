@@ -118,7 +118,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private GPSView mGpsView;
-//    private NearbySearchView mNearbySearcyView;
+    private NearbySearchView mNearbySearcyView;
     private static boolean mFirstLocation = true;//第一次定位
     private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
@@ -193,6 +193,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private ProgressBar mSearchProgressBar;
     private LocationManager mLocMgr;
 
+    private LinearLayout mHome;
+    private LinearLayout mOffice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,7 +228,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView.onCreate(savedInstanceState);
 
         mGpsView.setGpsState(mCurrentGpsState);
-//        mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
+        mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
@@ -255,6 +258,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecycleViewSearch.setLayoutManager(layoutManager);
         mSearchProgressBar = (ProgressBar)findViewById(R.id.progressBar);
+
+        //回家和去公司
+        mHome=(LinearLayout)findViewById(R.id.rl_home);
+        mOffice=(LinearLayout)findViewById(R.id.rl_office);
 
         setBottomSheet();
         setUpMap();
@@ -315,7 +322,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void setListener() {
         mGpsView.setOnGPSViewClickListener(this);
-//        mNearbySearcyView.setOnNearbySearchViewClickListener(this);
+        mNearbySearcyView.setOnNearbySearchViewClickListener(this);
         mRouteView.setOnClickListener(this);
         //地图手势事件
         aMap.setAMapGestureListener(this);
@@ -435,6 +442,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索输入框
         mEtSearchTip.addTextChangedListener(this);
         mSearchAdapter.setOnItemClickListener(this);
+        //回家和去公司
+        mHome.setOnClickListener(this);
+        mOffice.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -784,7 +794,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onNearbySearchClick() {
-        Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -1050,6 +1060,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             showMapView();
             return;
         }
+        // 回家
+        if(v == mHome){
+            showToast("click home");
+            return;
+        }
+        // 去公司
+        if(v == mOffice){
+            showToast("click office");
+            return;
+        }
 
     }
 
@@ -1086,7 +1106,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //gsp控件回退到原来位置、并显示底部其他控件
         mRouteView.setVisibility(View.VISIBLE);
 //        mFrequentView.setVisibility(View.VISIBLE);
-//        mNearbySearcyView.setVisibility(View.VISIBLE);
+        mNearbySearcyView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -1101,7 +1121,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mRouteView.setVisibility(View.GONE);
 //        mFrequentView.setVisibility(View.GONE);
-//        mNearbySearcyView.setVisibility(View.GONE);
+        mNearbySearcyView.setVisibility(View.GONE);
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.VISIBLE);
         //我的位置
