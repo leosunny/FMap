@@ -81,6 +81,7 @@ import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.MyAMapUtils;
+import com.jiyouliang.fmap.util.SPUtil;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
@@ -92,6 +93,7 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
+import com.jiyouliang.fmap.view.widget.OnHistoryItemClickListener;
 import com.jiyouliang.fmap.view.widget.OnItemClickListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -103,7 +105,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, INaviInfoCallback {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, OnHistoryItemClickListener, INaviInfoCallback {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -196,6 +198,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private LinearLayout mHome;
     private LinearLayout mOffice;
 
+    //搜索历史
+    private RecyclerView mRecycleViewSearchHistory;
+    private SearchHistoryAdapter mSearchHistoryAdapter;
+    private List<String> mSearchHistoryData = new ArrayList<>();
+    private List<String> mHistoryList = new ArrayList<>();
+    //private LinearLayout mLLSearchHistoryContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -259,6 +268,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRecycleViewSearch.setLayoutManager(layoutManager);
         mSearchProgressBar = (ProgressBar)findViewById(R.id.progressBar);
 
+        // 搜索历史
+        //mLLSearchHistoryContainer=(LinearLayout)findViewById(R.id.ll_search_history_container);
+        mRecycleViewSearchHistory=(RecyclerView)findViewById(R.id.rv_search_history);
+        LinearLayoutManager layoutHistoryManager = new LinearLayoutManager(this);
+        mRecycleViewSearchHistory.setLayoutManager(layoutHistoryManager);
+
         //回家和去公司
         mHome=(LinearLayout)findViewById(R.id.rl_home);
         mOffice=(LinearLayout)findViewById(R.id.rl_office);
@@ -285,6 +300,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索结果RecyclerView
         mSearchAdapter = new SearchAdapter(mSearchData);
         mRecycleViewSearch.setAdapter(mSearchAdapter);
+        // 搜索历史RecyclerView
+        mSearchHistoryAdapter = new SearchHistoryAdapter(mSearchHistoryData);
+        mRecycleViewSearchHistory.setAdapter(mSearchHistoryAdapter);
+
         mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
     }
@@ -442,7 +461,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索输入框
         mEtSearchTip.addTextChangedListener(this);
         mSearchAdapter.setOnItemClickListener(this);
-        //回家和去公司
+        // 搜索历史
+        mSearchHistoryAdapter.setOnItemClickListener(this);
+        // 回家和去公司
         mHome.setOnClickListener(this);
         mOffice.setOnClickListener(this);
     }
@@ -1549,6 +1570,29 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         InputMethodUtils.showInput(this, mEtSearchTip);
     }
 
+    /**
+     * 隐藏搜索提示布局
+     */
+    private void hideSearchHistoryView(){
+        //mLLSearchHistoryContainer.setVisibility(View.GONE);
+        mSearchHistoryData.clear();
+        mSearchHistoryAdapter.notifyDataSetChanged();
+
+        mRecycleViewSearchHistory.setVisibility(View.GONE);
+        mRecycleViewSearch.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 显示搜索历史布局
+     */
+    private void showSearchHistoryView(){
+        //mLLSearchHistoryContainer.setVisibility(View.VISIBLE);
+        mRecycleViewSearchHistory.setVisibility(View.VISIBLE);
+        mRecycleViewSearch.setVisibility(View.GONE);
+
+    }
+
+
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -1569,6 +1613,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mSearchProgressBar.setVisibility(View.GONE);
             return;
         }
+        hideSearchHistoryView();
         String content = s.toString();
         if(!TextUtils.isEmpty(content) && !TextUtils.isEmpty(mCity)){
             // 调用高德地图搜索提示api
@@ -1610,6 +1655,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         showSearchTipView();
         hideMapView();
         mMapMode = MapMode.SEARCH;
+
+        //显示搜索历史记录
+        mHistoryList=SPUtil.getSearchHistory();
+        if(mHistoryList.size()>0){
+            mSearchHistoryData.clear();
+            mSearchHistoryData.addAll(mHistoryList);
+            // 刷新RecycleView
+            mSearchHistoryAdapter.notifyDataSetChanged();
+            showSearchHistoryView();
+        }
     }
 
     @Override
@@ -1643,6 +1698,32 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mClickPoiLatLng=latLng;
             addPOIMarderAndShowDetail(latLng, tip.getName());
             showClickPoiDetail(latLng, tip.getName());
+
+            //存储搜索记录
+            String mClickPoiString=tip.getName()+","+tip.getPoint().getLatitude()+","+tip.getPoint().getLongitude()+","+tip.getAddress();
+            SPUtil.saveSearchHistory(mClickPoiString);
+        }
+    }
+
+    @Override
+    public void onHistoryItemClick(View v, int position) {
+        if(mSearchHistoryData != null && mSearchHistoryData.size() > 0){
+            String historyAddressStr = mSearchHistoryData.get(position);
+            if(historyAddressStr == null){
+                return;
+            }
+            hideSearchTipView();
+            showMapView();
+            mMoveToCenter = false;
+            isPoiClick = true;
+            String[] historyAddressStrs=historyAddressStr.split(",");
+            LatLng latLng = new LatLng(Double.parseDouble(historyAddressStrs[1]), Double.parseDouble(historyAddressStrs[2]));
+            mClickPoiLatLng=latLng;
+            addPOIMarderAndShowDetail(latLng, historyAddressStrs[0]);
+            showClickPoiDetail(latLng, historyAddressStrs[0]);
+
+            //存储搜索记录
+            SPUtil.saveSearchHistory(historyAddressStr);
         }
     }
 
@@ -1746,6 +1827,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         return null;
     }
 
+
+
     /**
      * 地图模式
      */
@@ -1796,6 +1879,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             Tip tip = mData.get(position);
             holder.tvSearchTitle.setText(tip.getName());
             holder.tvSearchLoc.setText(tip.getAddress());
+            holder.itemView.setTag(position);
         }
 
         @Override
@@ -1830,13 +1914,87 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
     /**
+     * 搜索历史Adapter
+     */
+    private static class SearchHistoryAdapter extends RecyclerView.Adapter<SearchHistoryViewHolder> implements View.OnClickListener {
+
+        private List<String> mData;
+        private OnHistoryItemClickListener mListener;
+
+        public SearchHistoryAdapter(List<String> data) {
+            this.mData = data;
+        }
+
+        /**
+         * 设置RecycleView条目点击
+         * @param listener
+         */
+        public void setOnItemClickListener(OnHistoryItemClickListener listener){
+            this.mListener = listener;
+        }
+
+        @NonNull
+        @Override
+        public SearchHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+            View itemView = ((LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                    .inflate(R.layout.search_tip_recycle_item, viewGroup, false);
+            itemView.setTag(position);
+            itemView.setOnClickListener(this);
+            return new SearchHistoryViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull SearchHistoryViewHolder holder, int position) {
+            String str = mData.get(position);
+            String[] strs=str.split(",");
+            if(strs.length==4){
+                holder.tvSearchTitle.setText(strs[0]);
+                holder.tvSearchLoc.setText(strs[3]);
+            }else{
+                holder.tvSearchTitle.setText(strs[0]);
+                holder.tvSearchLoc.setText(strs[0]);
+            }
+            holder.itemView.setTag(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            if(mData != null && mData.size() > 0){
+                return mData.size();
+            }
+            return 0;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v != null && mListener != null){
+                int postion = (int) v.getTag();
+                mListener.onHistoryItemClick(v, postion);
+            }
+        }
+    }
+
+
+    /**
+     * 搜索历史ViewHolder
+     */
+    private static class SearchHistoryViewHolder extends RecyclerView.ViewHolder{
+        TextView tvSearchTitle;
+        TextView tvSearchLoc;
+        public SearchHistoryViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSearchTitle = itemView.findViewById(R.id.tv_search_title);
+            tvSearchLoc = itemView.findViewById(R.id.tv_search_loc);
+        }
+    }
+
+
+    /**
      * 是否打开GPS
      * @return
      */
     private boolean isGpsOpen(){
         return mLocMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-
-
 
 }

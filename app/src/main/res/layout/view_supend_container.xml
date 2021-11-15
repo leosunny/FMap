@@ -122,6 +122,24 @@
 
         </RelativeLayout>
 
+<!--        <LinearLayout-->
+<!--            android:id="@+id/ll_search_history_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:visibility="gone"-->
+<!--            android:background="@color/gray_bg"-->
+<!--            android:orientation="vertical">-->
+<!--            -->
+<!--        </LinearLayout>-->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_search_history"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/padding_size" />
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_search"
             android:background="@color/white"
@@ -129,7 +147,9 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/padding_size" />
 
+
     </LinearLayout>
+
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
