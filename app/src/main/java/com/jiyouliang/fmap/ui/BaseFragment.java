@@ -1,7 +1,7 @@
 package com.jiyouliang.fmap.ui;
 
 import android.net.Uri;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.widget.Toast;
 
 /**
