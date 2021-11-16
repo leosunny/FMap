@@ -3,7 +3,9 @@ package com.jiyouliang.fmap.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -128,9 +130,22 @@ public class SplashActivity extends BaseActivity {
      * 进入主页
      */
     private void showMapPage() {
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-        finish();
+
+        if(isFirstStart()){
+            Intent intent = new Intent(this, PrivacyActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    private boolean isFirstStart(){
+        SharedPreferences sp = getSharedPreferences("user", Context.MODE_PRIVATE);
+        return sp.getBoolean("isFirstStart",true);
     }
 
     /**

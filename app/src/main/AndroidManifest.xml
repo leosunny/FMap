@@ -27,6 +27,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".ui.PrivacyActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.navi.RouteSelectActivity"
             android:exported="true" />
         <activity
@@ -85,8 +88,8 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.amap.api.navi.AmapRouteActivity"
-            android:launchMode="singleInstance"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+            android:launchMode="singleInstance" />
     </application>
 
 </manifest>
