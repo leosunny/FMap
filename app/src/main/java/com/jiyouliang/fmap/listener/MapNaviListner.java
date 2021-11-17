@@ -1,7 +1,10 @@
 package com.jiyouliang.fmap.listener;
 
+import android.view.View;
+
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AimlessModeListener;
+import com.amap.api.navi.INaviInfoCallback;
 import com.amap.api.navi.ParallelRoadListener;
 import com.amap.api.navi.enums.AMapNaviParallelRoadStatus;
 import com.amap.api.navi.model.AMapCalcRouteResult;
@@ -17,7 +20,7 @@ import com.amap.api.navi.model.AimLessModeCongestionInfo;
 import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
 
-public class MapNaviListner implements AMapNaviListener, ParallelRoadListener, AimlessModeListener {
+public class MapNaviListner implements AMapNaviListener, ParallelRoadListener, AimlessModeListener, INaviInfoCallback {
 
     private static MapNaviListner mInstance;
 
@@ -55,6 +58,11 @@ public class MapNaviListner implements AMapNaviListener, ParallelRoadListener, A
     }
 
     @Override
+    public void onArriveDestination(boolean b) {
+
+    }
+
+    @Override
     public void onGetNavigationText(int i, String s) {
 
     }
@@ -80,6 +88,26 @@ public class MapNaviListner implements AMapNaviListener, ParallelRoadListener, A
     }
 
     @Override
+    public void onStopSpeaking() {
+
+    }
+
+    @Override
+    public void onReCalculateRoute(int i) {
+
+    }
+
+    @Override
+    public void onExitPage(int i) {
+
+    }
+
+    @Override
+    public void onStrategyChanged(int i) {
+
+    }
+
+    @Override
     public void onReCalculateRouteForYaw() {
 
     }
@@ -92,6 +120,46 @@ public class MapNaviListner implements AMapNaviListener, ParallelRoadListener, A
     @Override
     public void onArrivedWayPoint(int i) {
 
+    }
+
+    @Override
+    public void onMapTypeChanged(int i) {
+
+    }
+
+    @Override
+    public void onNaviDirectionChanged(int i) {
+
+    }
+
+    @Override
+    public void onDayAndNightModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onBroadcastModeChanged(int i) {
+
+    }
+
+    @Override
+    public void onScaleAutoChanged(boolean b) {
+
+    }
+
+    @Override
+    public View getCustomMiddleView() {
+        return null;
+    }
+
+    @Override
+    public View getCustomNaviView() {
+        return null;
+    }
+
+    @Override
+    public View getCustomNaviBottomView() {
+        return null;
     }
 
     @Override
