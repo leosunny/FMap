@@ -62,15 +62,18 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        style="@style/PoiDetailIconStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/search_btn" />
+                        android:background="@drawable/icon_home" />
 
                     <TextView
-                        style="@style/PoiDetailTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
+
                         android:layout_marginLeft="@dimen/padding_small"
-                        android:textSize="8pt"
+                        android:textSize="10pt"
                         android:text="回家" />
 
                 </LinearLayout>
@@ -90,15 +93,17 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        style="@style/PoiDetailIconStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/star_selector" />
+                        android:background="@drawable/icon_office" />
 
                     <TextView
-                        style="@style/PoiDetailTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="@dimen/padding_small"
-                        android:textSize="8pt"
+                        android:textSize="10pt"
                         android:text="去公司" />
 
                 </LinearLayout>
