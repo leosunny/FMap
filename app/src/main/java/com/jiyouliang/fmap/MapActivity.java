@@ -64,6 +64,7 @@ import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
+import com.jiyouliang.fmap.listener.MapNaviListner;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
@@ -93,7 +94,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, OnHistoryItemClickListener, INaviInfoCallback {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, OnHistoryItemClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -545,7 +546,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         LogUtil.d(TAG, "activate: mLocationListener = " + mLocationListener + "");
         //设置定位回调监听
         if (mLocationClient == null) {
-            mLocationClient = new AMapLocationClient(this);
+            try {
+                mLocationClient = new AMapLocationClient(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mLocationOption = new AMapLocationClientOption();
             //设置定位监听
             mLocationClient.setLocationListener(this);
@@ -1022,9 +1027,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 return;
             }
             if(mClickPoiLatLng == null){
-                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, null, AmapNaviType.DRIVER), MapActivity.this);
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, null, AmapNaviType.DRIVER), MapNaviListner.getInstance());
             }else{
-                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi(mPoiName, mClickPoiLatLng, ""), AmapNaviType.DRIVER), MapActivity.this);
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi(mPoiName, mClickPoiLatLng, ""), AmapNaviType.DRIVER), MapNaviListner.getInstance());
             }
         }
 
@@ -1058,7 +1063,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             //导航组件
             AmapNaviParams params = new AmapNaviParams(new Poi("我的位置", mLatLng, ""), null, new Poi(mPoiName, mClickPoiLatLng, ""), AmapNaviType.DRIVER);
             params.setUseInnerVoice(true);
-            AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapActivity.this);
+            AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapNaviListner.getInstance());
 
             return;
         }
@@ -1714,107 +1719,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             SPUtil.saveSearchHistory(historyAddressStr);
         }
     }
-
-    @Override
-    public void onInitNaviFailure() {
-
-    }
-
-    @Override
-    public void onGetNavigationText(String s) {
-
-    }
-
-    @Override
-    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-
-    }
-
-    @Override
-    public void onArriveDestination(boolean b) {
-
-    }
-
-    @Override
-    public void onStartNavi(int i) {
-
-    }
-
-    @Override
-    public void onCalculateRouteSuccess(int[] ints) {
-
-    }
-
-    @Override
-    public void onCalculateRouteFailure(int i) {
-
-    }
-
-    @Override
-    public void onStopSpeaking() {
-
-    }
-
-    @Override
-    public void onReCalculateRoute(int i) {
-
-    }
-
-    @Override
-    public void onExitPage(int i) {
-
-    }
-
-    @Override
-    public void onStrategyChanged(int i) {
-
-    }
-
-    @Override
-    public void onArrivedWayPoint(int i) {
-
-    }
-
-    @Override
-    public void onMapTypeChanged(int i) {
-
-    }
-
-    @Override
-    public void onNaviDirectionChanged(int i) {
-
-    }
-
-    @Override
-    public void onDayAndNightModeChanged(int i) {
-
-    }
-
-    @Override
-    public void onBroadcastModeChanged(int i) {
-
-    }
-
-    @Override
-    public void onScaleAutoChanged(boolean b) {
-
-    }
-
-    @Override
-    public View getCustomMiddleView() {
-        return null;
-    }
-
-    @Override
-    public View getCustomNaviView() {
-        return null;
-    }
-
-    @Override
-    public View getCustomNaviBottomView() {
-        return null;
-    }
-
 
 
     /**
