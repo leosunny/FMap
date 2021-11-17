@@ -56,6 +56,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.SettingActivity"
+            android:theme="@style/MyTranslucentTheme"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
             android:name=".ui.user.UserActivity"
             android:theme="@style/MyTranslucentTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" />

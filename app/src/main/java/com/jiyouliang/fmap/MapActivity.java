@@ -66,6 +66,7 @@ import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.listener.MapNaviListner;
 import com.jiyouliang.fmap.ui.BaseActivity;
+import com.jiyouliang.fmap.ui.SettingActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
 import com.jiyouliang.fmap.util.DeviceUtils;
@@ -1666,8 +1667,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
     @Override
-    public void onQrScanClick() {
-
+    public void onSettingClick() {
+        startActivity(new Intent(MapActivity.this, SettingActivity.class));
     }
 
     @Override

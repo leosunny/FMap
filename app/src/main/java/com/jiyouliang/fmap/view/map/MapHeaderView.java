@@ -16,7 +16,7 @@ import com.jiyouliang.fmap.R;
  */
 public class MapHeaderView extends RelativeLayout implements View.OnClickListener {
     private EditText mEtSearch;
-    private ImageView mIvScan;
+    private ImageView mIvSetting;
     private ImageView mIvVoice;
     private OnMapHeaderViewClickListener mListener;
     private ImageView mIvUser;
@@ -41,9 +41,9 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
 
 
     private void initView() {
-        mIvUser = findViewById(R.id.iv_user);
+//        mIvUser = findViewById(R.id.iv_user);
         mEtSearch = findViewById(R.id.tv_search);
-//        mIvScan = findViewById(R.id.iv_qr_scan);
+        mIvSetting = findViewById(R.id.iv_setting);
 //        mIvVoice = findViewById(R.id.iv_voice);
     }
 
@@ -73,8 +73,9 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
         } else if (v == mEtSearch) {
             mListener.onSearchClick();
         }
-//        else if (v == mIvScan) {
-//            mListener.onQrScanClick();
+        else if (v == mIvSetting) {
+            mListener.onSettingClick();
+        }
 //        } else if (v == mIvVoice) {
 //            mListener.onVoiceClick();
 //        }
@@ -100,8 +101,8 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
         void onVoiceClick();
 
         /**
-         * 点击二维码扫描
+         * 点击设置
          */
-        void onQrScanClick();
+        void onSettingClick();
     }
 }
