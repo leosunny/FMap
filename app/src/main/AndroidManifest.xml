@@ -27,6 +27,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".ui.ControlActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.PrivacyActivity"
             android:exported="false" />
         <activity

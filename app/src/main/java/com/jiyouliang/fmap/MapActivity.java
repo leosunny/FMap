@@ -66,6 +66,7 @@ import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.listener.MapNaviListner;
 import com.jiyouliang.fmap.ui.BaseActivity;
+import com.jiyouliang.fmap.ui.ControlActivity;
 import com.jiyouliang.fmap.ui.SettingActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
@@ -956,7 +957,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 跳转用户登录
      */
     private void userLogin() {
-        startActivity(new Intent(MapActivity.this, UserActivity.class));
+        startActivity(new Intent(MapActivity.this, ControlActivity.class));
     }
 
 

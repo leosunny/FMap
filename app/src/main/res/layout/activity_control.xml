@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ControlActivity">
+
+
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/padding_large2"
+        android:id="@+id/ttv_control"
+        android:paddingLeft="@dimen/padding_large2"
+        app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
+        app:ttvLeftSize="20dp"
+        app:ttvRightText=""
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_header_control"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/user_detail_header_bg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_container_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_size"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/iv_header_control">
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_loc_unlock_icon"
+            app:vitTitle="@string/user_detail_loc_unlock" />
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_add_loc_icon"
+            app:vitTitle="@string/user_detail_add_loc" />
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_add_merchant_icon"
+            app:vitTitle="@string/user_detail_add_merchant" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_container2_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_size"
+        android:layout_marginTop="45dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/ll_container_control">
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_loc_unlock_icon"
+            app:vitTitle="@string/user_detail_loc_unlock" />
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_add_loc_icon"
+            app:vitTitle="@string/user_detail_add_loc" />
+
+        <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:vitIcon="@drawable/user_detail_add_merchant_icon"
+            app:vitTitle="@string/user_detail_add_merchant" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_container2_control"
+        >
+
+        <com.jiyouliang.fmap.view.map.DrawView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/radius_4_bg"/>
+
+        <com.jiyouliang.fmap.view.widget.VerticalSeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:max="20"
+            android:progress="10" />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
