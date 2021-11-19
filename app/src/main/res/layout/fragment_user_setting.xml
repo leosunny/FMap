@@ -80,6 +80,7 @@
                 android:layout_marginLeft="@dimen/padding_large2" />
 
             <com.jiyouliang.fmap.view.widget.SettingItemView
+                android:id="@+id/sivCommute"
                 style="@style/UserSettingItemStyle"
                 app:sivHeight="52dp"
                 app:sivTitle="@string/commute_setting"

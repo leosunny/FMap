@@ -44,8 +44,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void initView() {
-        mEtPhone = (ClearEditText) findViewById(R.id.et_phone);
-        mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_send_sms);
+        mEtPhone = (ClearEditText) findViewById(R.id.et_home);
+        mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_save);
         mBtnLogin.setEnabled(false);
 
 
@@ -96,7 +96,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_send_sms:
+            case R.id.btn_save:
                 if(mEtPhone.getText() != null){
                     phone = mEtPhone.getText().toString();
                 }

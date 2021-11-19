@@ -1077,12 +1077,40 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
         // 回家
         if(v == mHome){
-            showToast("click home");
+            String mHomeAddress = SPUtil.getHomeOfficeAddress(SPUtil.AddressType.HOME);
+            if(mHomeAddress != null && !mHomeAddress.equals("")){
+                String[] mHomeAddrs=mHomeAddress.split(",");
+                //导航组件
+                AmapNaviParams params = new AmapNaviParams(
+                        new Poi("我的位置", mLatLng, ""),
+                        null,
+                        new Poi(mHomeAddrs[0], new LatLng(Double.parseDouble(mHomeAddrs[1]),Double.parseDouble(mHomeAddrs[2])), ""),
+                        AmapNaviType.DRIVER);
+                params.setUseInnerVoice(true);
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapNaviListner.getInstance());
+            }else{
+                showToast("请进入设置菜单设置家的地址");
+            }
+
+
             return;
         }
         // 去公司
         if(v == mOffice){
-            showToast("click office");
+            String mOfficeAddress = SPUtil.getHomeOfficeAddress(SPUtil.AddressType.OFFICE);
+            if(mOfficeAddress != null && !mOfficeAddress.equals("")){
+                String[] mOfficeAddrs=mOfficeAddress.split(",");
+                //导航组件
+                AmapNaviParams params = new AmapNaviParams(
+                        new Poi("我的位置", mLatLng, ""),
+                        null,
+                        new Poi(mOfficeAddrs[0], new LatLng(Double.parseDouble(mOfficeAddrs[1]),Double.parseDouble(mOfficeAddrs[2])), ""),
+                        AmapNaviType.DRIVER);
+                params.setUseInnerVoice(true);
+                AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, MapNaviListner.getInstance());
+            }else{
+                showToast("请进入设置菜单设置公司的地址");
+            }
             return;
         }
 
@@ -1740,7 +1768,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 搜索Adapter
      */
-    private static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implements View.OnClickListener {
+    public static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implements View.OnClickListener {
 
         private List<Tip> mData;
         private OnItemClickListener mListener;

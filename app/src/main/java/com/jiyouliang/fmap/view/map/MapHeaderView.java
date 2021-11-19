@@ -41,7 +41,7 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
 
 
     private void initView() {
-//        mIvUser = findViewById(R.id.iv_user);
+        mIvUser = findViewById(R.id.iv_user);
         mEtSearch = findViewById(R.id.tv_search);
         mIvSetting = findViewById(R.id.iv_setting);
 //        mIvVoice = findViewById(R.id.iv_voice);

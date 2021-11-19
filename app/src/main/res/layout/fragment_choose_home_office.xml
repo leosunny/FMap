@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.user.LoginActivity">
+
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/padding_large2"
+        android:id="@+id/ttv"
+        android:paddingLeft="@dimen/padding_large2"
+        app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
+        app:ttvLeftSize="20dp"
+        app:ttvRightText=""
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="20dp"
+        android:text="上下班设置"
+        android:textColor="@color/text_color_black"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ttv" />
+
+    <com.jiyouliang.fmap.view.widget.ClearEditText
+        android:id="@+id/et_home"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/input_height"
+        android:hint="设置家庭地址，助你快速回家"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="@dimen/padding_large2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+
+
+    <com.jiyouliang.fmap.view.widget.ClearEditText
+        android:id="@+id/et_office"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/input_height"
+        android:hint="设置公司地址，助你快速上班"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="@dimen/padding_large2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_home" />
+
+    <com.jiyouliang.fmap.view.widget.ButtonLoadingView
+        android:id="@+id/btn_save"
+        style="@style/BtnLoginStyle"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="@dimen/padding_large2"
+        android:background="@drawable/btn_blue_large_selector"
+        android:enabled="false"
+        android:text="保存"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_office" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home_office_search"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_save" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

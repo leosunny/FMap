@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
+import com.jiyouliang.fmap.ui.user.ChooseHomeOfficeFragment;
 import com.jiyouliang.fmap.ui.user.UserDetailFragment;
 import com.jiyouliang.fmap.ui.user.UserInfoFragment;
 import com.jiyouliang.fmap.ui.user.UserLoginBySmsFragment;
@@ -37,6 +38,11 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
      * 用户设置Fragment栈名
      */
     private static final String STACK_NAME_SETTING = "user_setting";
+
+    /**
+     * 选择家和公司地址Fragment栈名
+     */
+    private static final String STACK_NAME_HOME_OFFICE = "home_office";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +107,12 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
             return;
         }
 
+        // 选择加和公司地址Fragment
+        if (fragment.equals(ChooseHomeOfficeFragment.class.getSimpleName())) {
+            showChooseHomeOfficeFragment();
+            return;
+        }
+
         // 返回上一页
         if (fragment.equals("back")) {
             back();
@@ -127,6 +139,19 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
         ft.replace(R.id.fragment_container, fragment);
         // 添加到回退栈
         ft.addToBackStack(STACK_NAME_SETTING);
+        ft.commit();
+    }
+
+    /**
+     * 选择家和公司地址Fragment
+     */
+    public void showChooseHomeOfficeFragment() {
+        mRootContainer.setBackgroundColor(Color.WHITE);
+        FragmentTransaction ft = fm.beginTransaction();
+        ChooseHomeOfficeFragment fragment = ChooseHomeOfficeFragment.newInstance();
+        ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_HOME_OFFICE);
         ft.commit();
     }
 

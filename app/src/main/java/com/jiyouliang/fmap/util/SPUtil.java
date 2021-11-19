@@ -15,6 +15,11 @@ import java.util.List;
 public class SPUtil {
     private final static String PREFERENCE_NAME = "search_history";
     private final static String SEARCH_HISTORY="address_history";
+
+    private final static String PREFERENCE_NAME_HOME = "perf_name_home";
+    private final static String PREF_HOME_ADDRESS = "perf_home";
+    private final static String PREFERENCE_NAME_OFFICE = "perf_name_office";
+    private final static String PREF_OFFICE_ADDRESS = "perf_office";
     // 保存搜索记录
     public static void saveSearchHistory(String inputText) {
         SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -62,5 +67,55 @@ public class SPUtil {
             historyList.clear();  //清空集合，这个很关键
         }
         return historyList;
+    }
+
+    public static void saveHomeOfficeAddress(String inputText,AddressType type){
+        if (TextUtils.isEmpty(inputText)) {
+            return;
+        }
+        if (type.equals(AddressType.HOME)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_HOME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(PREF_HOME_ADDRESS, inputText);
+            editor.commit();
+        }else if(type.equals(AddressType.OFFICE)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_OFFICE, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(PREF_OFFICE_ADDRESS, inputText);
+            editor.commit();
+        }
+
+    }
+
+    public static String getHomeOfficeAddress(AddressType type){
+        String address = null;
+        if (type.equals(AddressType.HOME)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_HOME, Context.MODE_PRIVATE);
+            address = sp.getString(PREF_HOME_ADDRESS, "");
+        }else if(type.equals(AddressType.OFFICE)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_OFFICE, Context.MODE_PRIVATE);
+            address = sp.getString(PREF_OFFICE_ADDRESS, "");
+        }
+
+        return address;
+    }
+
+    public static void delHomeOfficeAddress(AddressType type){
+        if (type.equals(AddressType.HOME)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_HOME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.clear();
+            editor.commit();
+        }else if(type.equals(AddressType.OFFICE)){
+            SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_OFFICE, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.clear();
+            editor.commit();
+        }
+    }
+
+    public enum AddressType{
+        HOME,
+        OFFICE
     }
 }

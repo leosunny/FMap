@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.jiyouliang.fmap.MapApplication;
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.data.UserLoginData;
 import com.jiyouliang.fmap.ui.BaseFragment;
@@ -15,6 +18,8 @@ import com.jiyouliang.fmap.util.security.ValidateUtil;
 import com.jiyouliang.fmap.view.widget.LoadingDialog;
 import com.jiyouliang.fmap.view.widget.SettingItemView;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
+
+import java.util.Set;
 
 /**
  * 用户设置页面
@@ -29,6 +34,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     private View mLogoutContainer;
     private SettingItemView mSivDownload;
     private SettingItemView mSivMsgPush;
+    private SettingItemView mSivCommute;
     private LoadingDialog mLoadingDialog;
     private UserSettingPresenter mPresenter;
 
@@ -78,6 +84,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         }
         mSivLogout = (SettingItemView) rootView.findViewById(R.id.siv_logout);
         mSivMsgPush = (SettingItemView) rootView.findViewById(R.id.sivMsgPush);
+        mSivCommute = (SettingItemView) rootView.findViewById(R.id.sivCommute);
         mSivDownload = (SettingItemView) rootView.findViewById(R.id.sivDownloadNew);
         mLogoutContainer = rootView.findViewById(R.id.ll_login_container);
 
@@ -158,6 +165,16 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         if (v == mSivDownload) {
             mSivDownload.setChecked(!mSivDownload.isChecked());
         }
+
+        if (v == mSivCommute){
+            if (mListener != null) {
+                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+                builder.appendQueryParameter("fragment", "ChooseHomeOfficeFragment");
+                Uri uri = Uri.parse(builder.toString());
+                mListener.onFragmentInteraction(uri);
+            }
+        }
+
         // 注销
         if(v == mSivLogout){
             if(!TextUtils.isEmpty(mPhone) && ValidateUtil.isPhone(mPhone)){

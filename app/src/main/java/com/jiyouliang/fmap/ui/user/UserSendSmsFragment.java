@@ -73,8 +73,8 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initView(View rootView) {
-        mEtPhone = (ClearEditText) rootView.findViewById(R.id.et_phone);
-        mBtnLogin = (ButtonLoadingView) rootView.findViewById(R.id.btn_send_sms);
+        mEtPhone = (ClearEditText) rootView.findViewById(R.id.et_home);
+        mBtnLogin = (ButtonLoadingView) rootView.findViewById(R.id.btn_save);
         mBtnLogin.setEnabled(false);
         mTopTitleView = (TopTitleView)rootView.findViewById(R.id.ttv);
     }
@@ -125,7 +125,7 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_send_sms:
+            case R.id.btn_save:
                 if(mEtPhone.getText() != null){
                     phone = mEtPhone.getText().toString();
                 }
