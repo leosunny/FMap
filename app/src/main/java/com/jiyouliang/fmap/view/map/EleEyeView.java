@@ -10,20 +10,20 @@ import com.jiyouliang.fmap.view.base.BaseIconView;
 /**
  * 打的
  */
-public class CallTaxiView extends BaseIconView {
+public class EleEyeView extends BaseIconView {
 
-    private static final String TAG = "CallTaxiView";
+    private static final String TAG = "EleEyeView";
 
 
-    public CallTaxiView(Context context) {
+    public EleEyeView(Context context) {
         this(context, null);
     }
 
-    public CallTaxiView(Context context, AttributeSet attrs) {
+    public EleEyeView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CallTaxiView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EleEyeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOnClickListener(new OnClickListener() {
             @Override
@@ -41,7 +41,7 @@ public class CallTaxiView extends BaseIconView {
 
     @Override
     public boolean createIcon() {
-        setIconBackground(R.drawable.poi_indicator_call_taxi);
+        setIconBackground(R.drawable.icon_cctv);
         return true;
     }
 }

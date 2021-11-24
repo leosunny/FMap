@@ -20,11 +20,11 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <com.jiyouliang.fmap.view.map.CallTaxiView-->
-<!--        android:id="@+id/ctv"-->
-<!--        style="@style/IconViewStyle"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/tv" />-->
+    <com.jiyouliang.fmap.view.map.EleEyeView
+        android:id="@+id/etv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
 
 <!--    <com.jiyouliang.fmap.view.map.GroupTeamView-->
 <!--        android:id="@+id/gtv"-->

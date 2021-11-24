@@ -11,6 +11,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.amap.api.navi.AMapNavi;
+import com.amap.api.navi.AimlessModeListener;
+import com.amap.api.navi.enums.AimLessMode;
+import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
+import com.amap.api.navi.model.AimLessModeCongestionInfo;
+import com.amap.api.navi.model.AimLessModeStat;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,8 +61,6 @@ import com.amap.api.maps.model.Poi;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
-import com.amap.api.navi.INaviInfoCallback;
-import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.LatLonSharePoint;
@@ -68,7 +73,6 @@ import com.jiyouliang.fmap.listener.MapNaviListner;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.ControlActivity;
 import com.jiyouliang.fmap.ui.SettingActivity;
-import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.InputMethodUtils;
@@ -78,6 +82,8 @@ import com.jiyouliang.fmap.util.SPUtil;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
+import com.jiyouliang.fmap.view.map.AimlessBarView;
+import com.jiyouliang.fmap.view.map.EleEyeView;
 import com.jiyouliang.fmap.view.map.GPSView;
 import com.jiyouliang.fmap.view.map.MapHeaderView;
 import com.jiyouliang.fmap.view.map.NearbySearchView;
@@ -96,7 +102,24 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener, OnHistoryItemClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener,
+        NearbySearchView.OnNearbySearchViewClickListener,
+        AimlessBarView.OnAimlessBarViewClickListener,
+        AMapGestureListener,
+        AMapLocationListener,
+        LocationSource,
+        TrafficView.OnTrafficChangeListener,
+        View.OnClickListener,
+        MapViewInterface,
+        PoiDetailBottomView.OnPoiDetailBottomClickListener,
+        ShareSearch.OnShareSearchListener,
+        AMap.OnPOIClickListener,
+        TextWatcher,
+        Inputtips.InputtipsListener,
+        MapHeaderView.OnMapHeaderViewClickListener,
+        OnItemClickListener,
+        OnHistoryItemClickListener,
+        AimlessModeListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -105,13 +128,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private static final int REQ_CODE_FINE_LOCATION = 1;
     private static final int REQ_CODE_STORAGE = 2;
     private TextureMapView mMapView;
-    private AMap aMap;
+    private AMap mAMap;
     private UiSettings mUiSettings;
 
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private GPSView mGpsView;
     private NearbySearchView mNearbySearcyView;
+    private AimlessBarView mAimlessBarView;
     private static boolean mFirstLocation = true;//第一次定位
     private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
@@ -131,6 +155,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private float mAccuracy;
     private boolean mMoveToCenter = true;//是否可以移动地图到定位点
     private TrafficView mTrafficView;
+    private EleEyeView mEleEyeView;
     private View mBottomSheet;
     private BottomSheetBehavior<View> mBehavior;
     private int mMaxPeekHeight;//最大高的
@@ -189,12 +214,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private LinearLayout mHome;
     private LinearLayout mOffice;
 
+    private LinearLayout mAimlessExit;
+
     //搜索历史
     private RecyclerView mRecycleViewSearchHistory;
     private SearchHistoryAdapter mSearchHistoryAdapter;
     private List<String> mSearchHistoryData = new ArrayList<>();
     private List<String> mHistoryList = new ArrayList<>();
     //private LinearLayout mLLSearchHistoryContainer;
+
+    private AMapNavi mAMapNavi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,15 +249,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView = (TextureMapView) findViewById(R.id.map);
         //交通流量状态控件
         mTrafficView = (TrafficView) findViewById(R.id.tv);
-        aMap = mMapView.getMap();
+        mAMap = mMapView.getMap();
         //显示实时交通
-        aMap.setTrafficEnabled(true);
+        mAMap.setTrafficEnabled(true);
+        //电子眼
+        mEleEyeView=(EleEyeView)findViewById(R.id.etv);
 
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
 
         mGpsView.setGpsState(mCurrentGpsState);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
+        mAimlessBarView =(AimlessBarView)findViewById(R.id.exit_aimless_view);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
@@ -269,6 +301,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mHome=(LinearLayout)findViewById(R.id.rl_home);
         mOffice=(LinearLayout)findViewById(R.id.rl_office);
 
+        mAimlessExit=(LinearLayout)findViewById(R.id.rl_exit);
+
         setBottomSheet();
         setUpMap();
 
@@ -296,6 +330,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRecycleViewSearchHistory.setAdapter(mSearchHistoryAdapter);
 
         mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        try {
+            mAMapNavi=AMapNavi.getInstance(this);
+        } catch (com.amap.api.maps.AMapException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -333,9 +373,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private void setListener() {
         mGpsView.setOnGPSViewClickListener(this);
         mNearbySearcyView.setOnNearbySearchViewClickListener(this);
+        mAimlessBarView.setOnAimlessBarViewClickListener(this);
         mRouteView.setOnClickListener(this);
         //地图手势事件
-        aMap.setAMapGestureListener(this);
+        mAMap.setAMapGestureListener(this);
         mSensorHelper = new SensorEventHelper(this);
         if (mSensorHelper != null) {
             mSensorHelper.registerSensorListener();
@@ -343,6 +384,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mTrafficView != null) {
             mTrafficView.setOnTrafficChangeListener(this);
         }
+        if(mEleEyeView !=null){
+            mEleEyeView.setOnClickListener(this);
+        }
+
         if (null != mPoiColseView) {
             mPoiColseView.setOnClickListener(this);
         }
@@ -444,7 +489,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 头部返回
         mImgBtnBack.setOnClickListener(this);
         // 地图poi点击
-        aMap.setOnPOIClickListener(this);
+        mAMap.setOnPOIClickListener(this);
         // 点击路径进入导航页面
         mTvRoute.setOnClickListener(this);
         // 搜索布局左侧返回箭头图标
@@ -457,14 +502,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 回家和去公司
         mHome.setOnClickListener(this);
         mOffice.setOnClickListener(this);
+
+        mAMapNavi.addAimlessModeListener(this);
+
+        mAimlessExit.setOnClickListener(this);
     }
 
     private void setUpMap() {
-        aMap.setLocationSource(this);//设置定位监听
+        mAMap.setLocationSource(this);//设置定位监听
         //隐藏缩放控件
-        aMap.getUiSettings().setZoomControlsEnabled(false);
+        mAMap.getUiSettings().setZoomControlsEnabled(false);
         //设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-        aMap.setMyLocationEnabled(true);
+        mAMap.setMyLocationEnabled(true);
         setLocationStyle();
     }
 
@@ -506,7 +555,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAccuracy = location.getAccuracy();
         LogUtil.d(TAG, "accuracy=" + mAccuracy + ",mFirstLocation=" + mFirstLocation);
         if (mFirstLocation) {
-            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
+            mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
                 public void onFinish() {
                     mCurrentGpsState = STATE_LOCKED;
@@ -529,7 +578,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
             if (mMoveToCenter) {
-                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+                mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
             }
 
         }
@@ -603,7 +652,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
         }
         //定位、且将视角移动到地图中心点，定位点依照设备方向旋转，  并且会跟随设备移动。
-        aMap.setMyLocationStyle(mLocationStyle.myLocationType(mMapType));
+        mAMap.setMyLocationStyle(mLocationStyle.myLocationType(mMapType));
     }
 
     @Override
@@ -768,12 +817,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mTvLocation.setText(String.format("在%s附近", mPoiName));
         }
 
-        aMap.setMyLocationEnabled(true);
+        mAMap.setMyLocationEnabled(true);
         LogUtil.d(TAG, "onGPSClick:mCurrentGpsState=" + mCurrentGpsState + ",mMapType=" + mMapType);
         //改变定位图标状态
         mGpsView.setGpsState(mCurrentGpsState);
         //执行地图动效
-        aMap.animateCamera(cameraUpdate, mAnimDuartion, new AMap.CancelableCallback() {
+        mAMap.animateCamera(cameraUpdate, mAnimDuartion, new AMap.CancelableCallback() {
             @Override
             public void onFinish() {
             }
@@ -791,7 +840,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 根据当前地图状态重置定位蓝点
      */
     private void resetLocationMarker() {
-        aMap.clear();
+        mAMap.clear();
         mLocMarker = null;
         if (mGpsView.getGpsState() == GPSView.STATE_ROTATE) {
             //ROTATE模式不需要方向传感器
@@ -831,7 +880,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         LogUtil.d(TAG, "onResume");
         mMapView.onResume();
         if (null == mSensorHelper) {
-            aMap.clear();
+            mAMap.clear();
             mSensorHelper = new SensorEventHelper(this);
             //重新注册
             if (mSensorHelper != null) {
@@ -842,7 +891,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if(mLocationOption != null && mLocationClient != null){
             mLocationOption.setInterval(2000);//定位时间间隔，默认2000ms
             mLocationClient.setLocationOption(mLocationOption);
-            aMap.setMyLocationEnabled(true);
+            mAMap.setMyLocationEnabled(true);
         }
         //registerWechatBroadcast();
     }
@@ -913,6 +962,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mLocMarker.destroy();
         }
 
+        if (mAMapNavi!=null){
+            mAMapNavi.stopAimlessMode();
+            mAMapNavi.destroy();
+        }
+
         // leakcanary检测
 
     }
@@ -925,7 +979,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         options.strokeColor(STROKE_COLOR);
         options.center(latlng);
         options.radius(radius);
-        mCircle = aMap.addCircle(options);
+        mCircle = mAMap.addCircle(options);
     }
 
     private void addMarker(LatLng latlng) {
@@ -937,7 +991,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 R.mipmap.navi_map_gps_locked)));
         markerOptions.anchor(0.5f, 0.5f);
         markerOptions.position(latlng);
-        mLocMarker = aMap.addMarker(markerOptions);
+        mLocMarker = mAMap.addMarker(markerOptions);
     }
 
     private void addRotateMarker(LatLng latlng) {
@@ -950,7 +1004,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 R.mipmap.navi_map_gps_3d)));
         markerOptions.anchor(0.5f, 0.5f);
         markerOptions.position(latlng);
-        mLocMarker = aMap.addMarker(markerOptions);
+        mLocMarker = mAMap.addMarker(markerOptions);
     }
 
     /**
@@ -963,7 +1017,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onTrafficChanged(boolean selected) {
-        aMap.setTrafficEnabled(selected);
+        mAMap.setTrafficEnabled(selected);
     }
 
     private void log(String msg) {
@@ -1112,6 +1166,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }else{
                 showToast("请进入设置菜单设置公司的地址");
             }
+            return;
+        }
+
+        if(v == mEleEyeView){
+            hideHeadBottomView();
+            mAMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+            return;
+        }
+
+        if(v == mAimlessExit){
+            showHeadBottomView();
+            mAMapNavi.stopAimlessMode();
             return;
         }
 
@@ -1313,7 +1379,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 地图平滑上移，重置新的marker
      */
     private void slideUpMarker() {
-        aMap.clear();
+        mAMap.clear();
         mLocMarker = null;
         addRotateMarker(mLatLng);
         if (null != mLocMarker) {
@@ -1356,7 +1422,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
         setLocationStyle();
         //禁用手势操作
-        aMap.getUiSettings().setAllGesturesEnabled(false);
+        mAMap.getUiSettings().setAllGesturesEnabled(false);
         if(!isPoiClick){
             mMoveToCenter = true;
         }else{
@@ -1376,7 +1442,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         lp.height = mScreenHeight;
         mMapView.setLayoutParams(lp);
         //启用手势操作
-        aMap.getUiSettings().setAllGesturesEnabled(true);
+        mAMap.getUiSettings().setAllGesturesEnabled(true);
         switch (mGpsView.getGpsState()) {
             case GPSView.STATE_ROTATE:
                 mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE;
@@ -1536,11 +1602,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
     private void addPOIMarker(LatLng latLng) {
-        aMap.clear();
+        mAMap.clear();
         MarkerOptions markOptiopns = new MarkerOptions();
         markOptiopns.position(latLng);
         markOptiopns.icon(BitmapDescriptorFactory.fromResource(R.drawable.poi_mark));
-        aMap.addMarker(markOptiopns);
+        mAMap.addMarker(markOptiopns);
     }
 
     /**
@@ -1549,8 +1615,37 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void animMap(LatLng latLng){
         if(latLng != null){
-            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, mZoomLevel));
+            mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, mZoomLevel));
         }
+    }
+
+    private void hideHeadBottomView(){
+        mMapHeaderView.setVisibility(View.GONE);
+        mSupendPartitionView.setVisibility(View.GONE);
+        mNearbySearcyView.setVisibility(View.GONE);
+        mGpsView.setVisibility(View.GONE);
+        mRouteView.setVisibility(View.GONE);
+
+        mBehavior.setHideable(true);
+        resetGpsButtonPosition();
+        mBottomSheet.setVisibility(View.GONE);
+        mPoiDetailTaxi.setVisibility(View.GONE);
+        mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        mAimlessBarView.setVisibility(View.VISIBLE);
+
+        mAMap.removeOnPOIClickListener(this);
+    }
+
+    private void showHeadBottomView(){
+        mMapHeaderView.setVisibility(View.VISIBLE);
+        mSupendPartitionView.setVisibility(View.VISIBLE);
+        mNearbySearcyView.setVisibility(View.VISIBLE);
+        mGpsView.setVisibility(View.VISIBLE);
+        mRouteView.setVisibility(View.VISIBLE);
+        mAimlessBarView.setVisibility(View.GONE);
+
+        mAMap.addOnPOIClickListener(this);
+
     }
 
     /**
@@ -1748,6 +1843,31 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             //存储搜索记录
             SPUtil.saveSearchHistory(historyAddressStr);
         }
+    }
+
+    @Override
+    public void onAimlessBarClick() {
+
+    }
+
+    @Override
+    public void onUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+        showToast("onUpdateTrafficFacility");
+    }
+
+    @Override
+    public void onUpdateAimlessModeElecCameraInfo(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+        showToast("onUpdateAimlessModeElecCameraInfo");
+    }
+
+    @Override
+    public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
+        showToast("updateAimlessModeStatistics");
+    }
+
+    @Override
+    public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
+        showToast("updateAimlessModeCongestionInfo");
     }
 
 
