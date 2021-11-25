@@ -68,7 +68,7 @@
 
                         android:layout_marginLeft="@dimen/padding_small"
                         android:textSize="10pt"
-                        android:text="退出" />
+                        android:text="退出巡航" />
 
                 </LinearLayout>
 
@@ -93,7 +93,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="@dimen/padding_small"
                         android:textSize="10pt"
-                        android:text="设置" />
+                        android:text="巡航设置" />
 
                 </LinearLayout>
 

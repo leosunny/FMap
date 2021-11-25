@@ -218,6 +218,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private LinearLayout mOffice;
 
     private LinearLayout mAimlessExit;
+    private LinearLayout mAimlessSetting;
 
     //搜索历史
     private RecyclerView mRecycleViewSearchHistory;
@@ -306,6 +307,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mOffice=(LinearLayout)findViewById(R.id.rl_office);
 
         mAimlessExit=(LinearLayout)findViewById(R.id.rl_exit);
+        mAimlessSetting=(LinearLayout)findViewById(R.id.rl_setting);
 
         setBottomSheet();
         setUpMap();
@@ -510,6 +512,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAMapNavi.addAimlessModeListener(this);
 
         mAimlessExit.setOnClickListener(this);
+        mAimlessSetting.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -1177,6 +1180,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        //电子眼按钮
         if(v == mEleEyeView){
             hideHeadBottomView();
             mAMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
@@ -1188,6 +1192,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        //退出电子眼
         if(v == mAimlessExit){
             showHeadBottomView();
             mAMapNavi.stopAimlessMode();
@@ -1197,6 +1202,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
             mMoveToCenter = true;
 
+            return;
+        }
+
+        //电子眼设置
+        if(v == mAimlessSetting){
+            startActivity(new Intent(MapActivity.this, SettingActivity.class));
             return;
         }
 
