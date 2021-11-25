@@ -239,7 +239,7 @@ public class DialProgress extends View {
 
         mValueOffset = mCenterPoint.y + getBaselineOffsetFromY(mValuePaint);
         mHintOffset = mCenterPoint.y - mRadius * mTextOffsetPercentInRadius + getBaselineOffsetFromY(mHintPaint);
-        mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius + getBaselineOffsetFromY(mUnitPaint);
+        mUnitOffset = mCenterPoint.y + 2 * mRadius * mTextOffsetPercentInRadius + getBaselineOffsetFromY(mUnitPaint);
 
         updateArcPaint();
         Log.d(TAG, "onMeasure: 控件大小 = " + "(" + getMeasuredWidth() + ", " + getMeasuredHeight() + ")"
@@ -282,7 +282,7 @@ public class DialProgress extends View {
 
         canvas.save();
         canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
-        canvas.drawCircle(mCenterPoint.x,mCenterPoint.y,80,mCirclePaint);
+        canvas.drawCircle(mCenterPoint.x,mCenterPoint.y,mRadius-10,mCirclePaint);
         canvas.restore();
     }
 
