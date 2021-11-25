@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingRight="@dimen/padding_large2"
-        android:id="@+id/ttv"
+        android:id="@+id/ttv_aimless"
         android:paddingLeft="@dimen/padding_large2"
         app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
         app:ttvLeftSize="20dp"
@@ -31,7 +31,7 @@
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ttv" />
+        app:layout_constraintTop_toBottomOf="@id/ttv_aimless" />
 
     <TextView
         android:id="@+id/tv_broadcast"
@@ -45,10 +45,87 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_desc_aimless" />
 
+    <LinearLayout
+        android:id="@+id/ll_aimless_broadcast_container"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_broadcast">
+        <CheckBox
+            android:id="@+id/cb_broadcast_eye"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="@dimen/text_size_20"
+            android:text="电子眼播报"/>
+
+        <CheckBox
+            android:id="@+id/cb_broadcast_road"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="@dimen/text_size_20"
+            android:text="前方路况"/>
+
+        <CheckBox
+            android:id="@+id/cb_broadcast_safe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="@dimen/text_size_20"
+            android:text="安全提醒"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_aimless_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="@dimen/padding_big"
+        android:layout_marginRight="@dimen/padding_large2"
+        android:text="巡航视角"
+        android:textSize="@dimen/text_size_20"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_aimless_broadcast_container" />
+
+    <RadioGroup
+        android:id="@+id/rg_aimless_view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_aimless_view">
+        <RadioButton
+            android:id="@+id/rb_car_north"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="车头向上"
+            android:checked="true"
+            android:textSize="@dimen/text_size_20"/>
+
+        <RadioButton
+            android:id="@+id/rb_north"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="北向上"
+            android:textSize="@dimen/text_size_20"/>
+    </RadioGroup>
 
 
-
-
-
+    <TextView
+        android:id="@+id/tv_aimless_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="@dimen/padding_size"
+        android:layout_marginRight="@dimen/padding_large2"
+        android:layout_marginBottom="@dimen/padding_large2"
+        android:text="重新进入巡航模式生效"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

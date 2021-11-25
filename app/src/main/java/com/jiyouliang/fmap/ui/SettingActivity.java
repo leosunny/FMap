@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
+import com.jiyouliang.fmap.ui.user.AimlessSettingFragment;
 import com.jiyouliang.fmap.ui.user.ChooseHomeOfficeFragment;
 import com.jiyouliang.fmap.ui.user.UserDetailFragment;
 import com.jiyouliang.fmap.ui.user.UserInfoFragment;
@@ -47,7 +48,7 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
     /**
      * 巡航设置Fragment栈名
      */
-    private static final String STACK_NAME_AIMLESS = "user_aimless ";
+    private static final String STACK_NAME_AIMLESS = "aimless_setting";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +113,15 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
             return;
         }
 
-        // 选择加和公司地址Fragment
+        // 选择家和公司地址Fragment
         if (fragment.equals(ChooseHomeOfficeFragment.class.getSimpleName())) {
             showChooseHomeOfficeFragment();
+            return;
+        }
+
+        // 选择巡航设置Fragment
+        if (fragment.equals(AimlessSettingFragment.class.getSimpleName())) {
+            showAimlessSettingFragment();
             return;
         }
 
@@ -157,6 +164,19 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
         ft.replace(R.id.fragment_container, fragment);
         // 添加到回退栈
         ft.addToBackStack(STACK_NAME_HOME_OFFICE);
+        ft.commit();
+    }
+
+    /**
+     * 显示巡航设置Fragment
+     */
+    public void showAimlessSettingFragment() {
+        mRootContainer.setBackgroundColor(Color.WHITE);
+        FragmentTransaction ft = fm.beginTransaction();
+        AimlessSettingFragment fragment = AimlessSettingFragment.newInstance();
+        ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_AIMLESS);
         ft.commit();
     }
 

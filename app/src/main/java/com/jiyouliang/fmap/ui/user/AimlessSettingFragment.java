@@ -9,6 +9,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,20 +33,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AimlessSettingFragment extends BaseFragment implements View.OnClickListener, TopTitleView.OnTopTitleViewClickListener {
+public class AimlessSettingFragment extends BaseFragment implements View.OnClickListener,
+        TopTitleView.OnTopTitleViewClickListener,
+        CompoundButton.OnCheckedChangeListener{
 
-    private ClearEditText mEtHome;
-    private ClearEditText mEtOffice;
-    private ButtonLoadingView mBtnSave;
     private static final boolean DEBUGGING = true;
-    private static final String TAG = "ChooseHomeOfficeFragment";
+    private static final String TAG = "AimlessSettingFragment";
     private Context mContext;
+
+    private CheckBox mCBBroadcastEye;
+    private CheckBox mCBBroadcastRoad;
+    private CheckBox mCBBroadcastSafe;
+
+    private RadioButton mRBCarNorth;
+    private RadioButton mRBNorth;
 
     private OnFragmentInteractionListener mListener;
     private TopTitleView mTopTitleView;
-
-    private String mHomeAddress;
-    private String mOfficeAddress;
 
     public AimlessSettingFragment() {
         // Required empty public constructor
@@ -76,64 +82,37 @@ public class AimlessSettingFragment extends BaseFragment implements View.OnClick
     }
 
     private void initView(View rootView) {
-        mEtHome = (ClearEditText) rootView.findViewById(R.id.et_home);
-        mEtOffice = (ClearEditText) rootView.findViewById(R.id.et_office);
-        mBtnSave = (ButtonLoadingView) rootView.findViewById(R.id.btn_save);
-        mBtnSave.setEnabled(false);
-        mTopTitleView = (TopTitleView)rootView.findViewById(R.id.ttv);
+        mCBBroadcastEye=(CheckBox)rootView.findViewById(R.id.cb_broadcast_eye);
+        mCBBroadcastRoad=(CheckBox)rootView.findViewById(R.id.cb_broadcast_road);
+        mCBBroadcastSafe=(CheckBox)rootView.findViewById(R.id.cb_broadcast_safe);
+        mRBCarNorth=(RadioButton)rootView.findViewById(R.id.rb_car_north);
+        mRBNorth=(RadioButton)rootView.findViewById(R.id.rb_north);
+        mTopTitleView = (TopTitleView)rootView.findViewById(R.id.ttv_aimless);
     }
 
     private void setListener() {
-        mEtHome.setOnClearEditClickListener(new ClearEditText.OnClearEditClickListener() {
-            @Override
-            public void onDelete() {
-                //清空文字
-                mEtHome.setText("");
-            }
-        });
-
-        mEtOffice.setOnClearEditClickListener(new ClearEditText.OnClearEditClickListener() {
-            @Override
-            public void onDelete() {
-                //清空文字
-                mEtOffice.setText("");
-            }
-        });
-
-        mBtnSave.setOnClickListener(this);
+        mCBBroadcastEye.setOnCheckedChangeListener(this);
+        mCBBroadcastRoad.setOnCheckedChangeListener(this);
+        mCBBroadcastSafe.setOnCheckedChangeListener(this);
+        mRBCarNorth.setOnCheckedChangeListener(this);
+        mRBNorth.setOnCheckedChangeListener(this);
         mTopTitleView.setOnTopTitleViewClickListener(this);
 
     }
 
     private void initData() {
         mContext = getContext();
-
-        // 获取家和公司的地址
-        mHomeAddress = SPUtil.getHomeOfficeAddress(SPUtil.AddressType.HOME);
-        mOfficeAddress = SPUtil.getHomeOfficeAddress(SPUtil.AddressType.OFFICE);
-
-        if(mHomeAddress != null){
-            mEtHome.setText(mHomeAddress.split(",")[0]);
-        }
-        if(mOfficeAddress != null){
-            mEtOffice.setText(mOfficeAddress.split(",")[0]);
+        boolean isCarNorth = SPUtil.getAimlessNorthView();
+        if(isCarNorth){
+            mRBCarNorth.setChecked(true);
+        }else{
+            mRBNorth.setChecked(true);
         }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_save:
-                mBtnSave.setEnabled(false);
-                if(mEtHome.getText().toString().equals("")){
-                    SPUtil.delHomeOfficeAddress(SPUtil.AddressType.HOME);
-                }
-                if(mEtOffice.getText().toString().equals("")){
-                    SPUtil.delHomeOfficeAddress(SPUtil.AddressType.OFFICE);
-                }
-                mBtnSave.setEnabled(false);
-                break;
-        }
+
     }
 
     private void log(String msg) {
@@ -181,5 +160,18 @@ public class AimlessSettingFragment extends BaseFragment implements View.OnClick
     @Override
     public void onRightClick(View v) {
 
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()){
+            case R.id.rb_north:
+                break;
+            case R.id.rb_car_north:
+                SPUtil.saveAimlessNorthView(isChecked);
+                break;
+            default:
+                break;
+        }
     }
 }

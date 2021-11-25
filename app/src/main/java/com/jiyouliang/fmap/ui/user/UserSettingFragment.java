@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.iflytek.cloud.Setting;
 import com.jiyouliang.fmap.MapApplication;
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.data.UserLoginData;
@@ -35,6 +36,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     private SettingItemView mSivDownload;
     private SettingItemView mSivMsgPush;
     private SettingItemView mSivCommute;
+    private SettingItemView mSivAimlessSetting;
     private LoadingDialog mLoadingDialog;
     private UserSettingPresenter mPresenter;
 
@@ -85,6 +87,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         mSivLogout = (SettingItemView) rootView.findViewById(R.id.siv_logout);
         mSivMsgPush = (SettingItemView) rootView.findViewById(R.id.sivMsgPush);
         mSivCommute = (SettingItemView) rootView.findViewById(R.id.sivCommute);
+        mSivAimlessSetting = (SettingItemView)rootView.findViewById(R.id.sivAimless);
         mSivDownload = (SettingItemView) rootView.findViewById(R.id.sivDownloadNew);
         mLogoutContainer = rootView.findViewById(R.id.ll_login_container);
 
@@ -170,6 +173,15 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
             if (mListener != null) {
                 Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
                 builder.appendQueryParameter("fragment", "ChooseHomeOfficeFragment");
+                Uri uri = Uri.parse(builder.toString());
+                mListener.onFragmentInteraction(uri);
+            }
+        }
+
+        if (v == mSivAimlessSetting){
+            if (mListener != null) {
+                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+                builder.appendQueryParameter("fragment", "AimlessSettingFragment");
                 Uri uri = Uri.parse(builder.toString());
                 mListener.onFragmentInteraction(uri);
             }

@@ -91,9 +91,10 @@
                 android:layout_marginLeft="@dimen/padding_large2" />
 
             <com.jiyouliang.fmap.view.widget.SettingItemView
+                android:id="@+id/sivAimless"
                 style="@style/UserSettingItemStyle"
                 app:sivHeight="52dp"
-                app:sivTitle="@string/common_trip_ways"
+                app:sivTitle="@string/aimless_setting"
                 app:sivTitleSize="18dp" />
 
             <View

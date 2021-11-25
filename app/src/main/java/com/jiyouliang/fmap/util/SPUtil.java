@@ -20,6 +20,9 @@ public class SPUtil {
     private final static String PREF_HOME_ADDRESS = "perf_home";
     private final static String PREFERENCE_NAME_OFFICE = "perf_name_office";
     private final static String PREF_OFFICE_ADDRESS = "perf_office";
+
+    private final static String PREFERENCE_NAME_AIMLESS = "perf_name_aimless";
+    private final static String AIMLESS_NORTH_VIEW="perf_north_view";
     // 保存搜索记录
     public static void saveSearchHistory(String inputText) {
         SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -112,6 +115,19 @@ public class SPUtil {
             editor.clear();
             editor.commit();
         }
+    }
+
+    public static void saveAimlessNorthView(boolean isCarNorth){
+        SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_AIMLESS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(AIMLESS_NORTH_VIEW, isCarNorth);
+        editor.commit();
+    }
+
+    public static boolean getAimlessNorthView(){
+        SharedPreferences sp = MapApplication.getContext().getSharedPreferences(PREFERENCE_NAME_AIMLESS, Context.MODE_PRIVATE);
+        boolean isCarNorth = sp.getBoolean(AIMLESS_NORTH_VIEW, true);
+        return isCarNorth;
     }
 
     public enum AddressType{

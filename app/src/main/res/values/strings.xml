@@ -50,6 +50,7 @@
     <string name="voice_setting">语音设置</string>
     <string name="commute_setting">通勤设置(Done)</string>
     <string name="common_trip_ways">通用出行方式</string>
+    <string name="aimless_setting">巡航设置(Done)</string>
     <string name="switch_city">切换城市</string>
     <string name="message_push">消息推送</string>
     <string name="download_new_version_on_wifi">WI-Fi下自动下载最新版</string>

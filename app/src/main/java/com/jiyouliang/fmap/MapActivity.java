@@ -549,9 +549,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 showPoiNameText(String.format("在%s附近", mPoiName));
             }
         }
+        if(mMapMode.equals(MapMode.AIMLESS)){
+            double speed = location.getSpeed()* 3.6;
+            mCircleProgress.setValue((float) speed);
+        }
 
-        float speed = location.getSpeed();
-        mCircleProgress.setValue(speed);
         //LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName+",getDescription="+location.getDescription()+", address="+location.getAddress()+",getLocationDetail"+location.getLocationDetail()+",street="+location.getStreet());
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
@@ -588,7 +590,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
             if (mMoveToCenter) {
-                mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+                if(mMapMode.equals(MapMode.AIMLESS)){
+                    mAMap.animateCamera(CameraUpdateFactory.newLatLng(mLatLng));
+                }else{
+                    mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+                }
             }
 
         }
@@ -727,7 +733,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void onScroll(float v, float v1) {
-        mMoveToCenter = false;
+        if(!mMapMode.equals(MapMode.AIMLESS)){
+            mMoveToCenter = false;
+        }else{
+            mMoveToCenter =true;
+        }
+
         //避免重复调用闪屏，当手指up才重置为false
         /*if (!onScrolling) {
             onScrolling = true;
@@ -1182,25 +1193,59 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         //电子眼按钮
         if(v == mEleEyeView){
+            mMapMode=MapMode.AIMLESS;
             hideHeadBottomView();
             mAMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+            mAMapNavi.setUseInnerVoice(true,false);
             mAMap.removeOnPOIClickListener(this);
             if(mLatLng!=null){
                 mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 18));
             }
-            mMoveToCenter = false;
+
+            if(SPUtil.getAimlessNorthView()){
+                mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER;
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(mLatLng, 18, 0, 0));
+                mAMap.animateCamera(cameraUpdate, 500, new AMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+                setLocationStyle();
+            }
+
+            mMoveToCenter = true;
             return;
         }
 
         //退出电子眼
         if(v == mAimlessExit){
+            mMapMode=MapMode.NORMAL;
             showHeadBottomView();
             mAMapNavi.stopAimlessMode();
             mAMap.addOnPOIClickListener(this);
             if(mLatLng!=null){
                 mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 16));
             }
-            mMoveToCenter = true;
+
+            mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(mLatLng, 16, 0, 0));
+            mAMap.animateCamera(cameraUpdate, 500, new AMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            });
+            setLocationStyle();
+            mMoveToCenter = false;
 
             return;
         }
@@ -1913,7 +1958,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         /**
          * 搜索模式:显示搜索提示和搜索结果
          */
-        SEARCH
+        SEARCH,
+
+        AIMLESS
     }
 
     /**
