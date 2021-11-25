@@ -724,6 +724,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void onScroll(float v, float v1) {
+        mMoveToCenter = false;
         //避免重复调用闪屏，当手指up才重置为false
         /*if (!onScrolling) {
             onScrolling = true;
@@ -1881,7 +1882,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-        showToast("updateAimlessModeStatistics");
     }
 
     @Override
