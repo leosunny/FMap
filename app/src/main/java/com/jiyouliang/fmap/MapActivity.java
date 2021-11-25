@@ -1179,12 +1179,23 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if(v == mEleEyeView){
             hideHeadBottomView();
             mAMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+            mAMap.removeOnPOIClickListener(this);
+            if(mLatLng!=null){
+                mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 18));
+            }
+            mMoveToCenter = false;
             return;
         }
 
         if(v == mAimlessExit){
             showHeadBottomView();
             mAMapNavi.stopAimlessMode();
+            mAMap.addOnPOIClickListener(this);
+            if(mLatLng!=null){
+                mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 16));
+            }
+            mMoveToCenter = true;
+
             return;
         }
 
@@ -1641,7 +1652,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAimlessBarView.setVisibility(View.VISIBLE);
         mCircleProgress.setVisibility(View.VISIBLE);
 
-        mAMap.removeOnPOIClickListener(this);
+
     }
 
     private void showHeadBottomView(){
@@ -1652,8 +1663,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRouteView.setVisibility(View.VISIBLE);
         mAimlessBarView.setVisibility(View.GONE);
         mCircleProgress.setVisibility(View.GONE);
-
-        mAMap.addOnPOIClickListener(this);
 
     }
 
@@ -1867,6 +1876,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onUpdateAimlessModeElecCameraInfo(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
         showToast("onUpdateAimlessModeElecCameraInfo");
+
     }
 
     @Override
