@@ -91,6 +91,8 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
+import com.jiyouliang.fmap.view.widget.CircleProgress;
+import com.jiyouliang.fmap.view.widget.DialProgress;
 import com.jiyouliang.fmap.view.widget.OnHistoryItemClickListener;
 import com.jiyouliang.fmap.view.widget.OnItemClickListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -136,6 +138,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private GPSView mGpsView;
     private NearbySearchView mNearbySearcyView;
     private AimlessBarView mAimlessBarView;
+    private DialProgress mCircleProgress;
     private static boolean mFirstLocation = true;//第一次定位
     private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
@@ -261,6 +264,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mGpsView.setGpsState(mCurrentGpsState);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
         mAimlessBarView =(AimlessBarView)findViewById(R.id.exit_aimless_view);
+        mCircleProgress =(DialProgress) findViewById(R.id.circle_progress_bar);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
@@ -542,6 +546,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 showPoiNameText(String.format("在%s附近", mPoiName));
             }
         }
+
+        float speed = location.getSpeed();
+        mCircleProgress.setValue(speed);
         //LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName+",getDescription="+location.getDescription()+", address="+location.getAddress()+",getLocationDetail"+location.getLocationDetail()+",street="+location.getStreet());
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
@@ -1632,6 +1639,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mPoiDetailTaxi.setVisibility(View.GONE);
         mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         mAimlessBarView.setVisibility(View.VISIBLE);
+        mCircleProgress.setVisibility(View.VISIBLE);
 
         mAMap.removeOnPOIClickListener(this);
     }
@@ -1643,6 +1651,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mGpsView.setVisibility(View.VISIBLE);
         mRouteView.setVisibility(View.VISIBLE);
         mAimlessBarView.setVisibility(View.GONE);
+        mCircleProgress.setVisibility(View.GONE);
 
         mAMap.addOnPOIClickListener(this);
 
