@@ -44,6 +44,11 @@ public class SettingActivity extends FragmentActivity implements BaseFragment.On
      */
     private static final String STACK_NAME_HOME_OFFICE = "home_office";
 
+    /**
+     * 巡航设置Fragment栈名
+     */
+    private static final String STACK_NAME_AIMLESS = "user_aimless ";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
