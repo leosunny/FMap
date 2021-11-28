@@ -46,6 +46,8 @@
 <!--                android:layout_centerVertical="true" />-->
         </RelativeLayout>
 
+
+
         <com.jiyouliang.fmap.view.map.NearbySearchView
             android:id="@+id/nearby_view"
             android:layout_width="match_parent"
@@ -140,6 +142,73 @@
 <!--            -->
 <!--        </LinearLayout>-->
 
+        <LinearLayout
+            android:id="@+id/cl_his_fav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/padding_size"
+            android:paddingBottom="@dimen/padding_size">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/ll_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_histroy"
+                        style="@style/PoiDetailIconStyle"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/search_selector" />
+
+                    <TextView
+                        style="@style/PoiDetailTextStyle"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/padding_small"
+                        android:text="搜索历史" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/ll_favorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_favorite"
+                        style="@style/PoiDetailIconStyle"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/star_selector" />
+
+                    <TextView
+                        style="@style/PoiDetailTextStyle"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/padding_small"
+                        android:text="收藏" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_search_history"
             android:background="@color/white"
@@ -147,6 +216,12 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/padding_size" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_favorite"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/padding_size" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_search"

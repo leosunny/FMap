@@ -21,9 +21,11 @@ import com.amap.api.navi.model.AimLessModeStat;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,8 +93,8 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
-import com.jiyouliang.fmap.view.widget.CircleProgress;
 import com.jiyouliang.fmap.view.widget.DialProgress;
+import com.jiyouliang.fmap.view.widget.OnFavoriteItemClickListener;
 import com.jiyouliang.fmap.view.widget.OnHistoryItemClickListener;
 import com.jiyouliang.fmap.view.widget.OnItemClickListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -121,6 +123,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         MapHeaderView.OnMapHeaderViewClickListener,
         OnItemClickListener,
         OnHistoryItemClickListener,
+        OnFavoriteItemClickListener,
         AimlessModeListener {
     private static final String TAG = "MapActivity";
     /**
@@ -187,6 +190,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private MyLocationStyle mLocationStyle;
     private boolean slideDown;//向下滑动
     private LinearLayout mShareContainer;
+    private LinearLayout mFavoriteBtn;
+    private ImageView mIvPoiFavorite;
+    private boolean isPoiFavorite = false;
+    private String mPoiFavorite;
     private IWXAPI api;
     private BroadcastReceiver mWechatBroadcast;
     private ShareSearch mShareSearch;
@@ -226,6 +233,20 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private List<String> mSearchHistoryData = new ArrayList<>();
     private List<String> mHistoryList = new ArrayList<>();
     //private LinearLayout mLLSearchHistoryContainer;
+
+    //收藏
+    private RecyclerView mRecycleViewFavorite;
+    private FavoriteAdapter mFavoriteAdapter;
+    private List<String> mFavoriteData = new ArrayList<>();
+    private List<String> mFavoriteList = new ArrayList<>();
+
+
+    private LinearLayout mHistory;
+    private LinearLayout mFavorite;
+    private ImageView mIvHistory;
+    private ImageView mIvFavorite;
+    private boolean isHistorySelected = false;
+    private boolean isFavoriteSelected = false;
 
     private AMapNavi mAMapNavi;
 
@@ -283,8 +304,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mFeedbackContainer.setVisibility(View.GONE);
         mSupendPartitionView = (SupendPartitionView) findViewById(R.id.spv);
         // 分享组件
-        mShareContainer = (LinearLayout)findViewById(R.id.rl_right);
+        mShareContainer = (LinearLayout)findViewById(R.id.rl_wxshare);
         mImgBtnBack= (ImageButton)findViewById(R.id.ib_back);
+        // 收藏
+        mFavoriteBtn = (LinearLayout)findViewById(R.id.rl_favorite);
+        mIvPoiFavorite = (ImageView)findViewById(R.id.iv_poi_favorite);
         // 路线
         mTvRoute = (TextView)findViewById(R.id.tv_route);
         // 搜索区域
@@ -301,6 +325,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRecycleViewSearchHistory=(RecyclerView)findViewById(R.id.rv_search_history);
         LinearLayoutManager layoutHistoryManager = new LinearLayoutManager(this);
         mRecycleViewSearchHistory.setLayoutManager(layoutHistoryManager);
+
+        mHistory = (LinearLayout)findViewById(R.id.ll_history);
+        mFavorite = (LinearLayout)findViewById(R.id.ll_favorite);
+        mIvHistory = (ImageView)findViewById(R.id.iv_histroy);
+        mIvFavorite = (ImageView)findViewById(R.id.iv_favorite);
+
+        mRecycleViewFavorite = (RecyclerView)findViewById(R.id.rv_favorite);
+        LinearLayoutManager layoutFavoriteManager = new LinearLayoutManager(this);
+        mRecycleViewFavorite.setLayoutManager(layoutFavoriteManager);
 
         //回家和去公司
         mHome=(LinearLayout)findViewById(R.id.rl_home);
@@ -335,6 +368,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSearchHistoryAdapter = new SearchHistoryAdapter(mSearchHistoryData);
         mRecycleViewSearchHistory.setAdapter(mSearchHistoryAdapter);
 
+        // 搜藏
+        mFavoriteAdapter = new FavoriteAdapter(mFavoriteData);
+        mRecycleViewFavorite.setAdapter(mFavoriteAdapter);
+
         mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         try {
@@ -342,6 +379,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         } catch (com.amap.api.maps.AMapException e) {
             e.printStackTrace();
         }
+
+        mIvHistory.setSelected(true);
+        isHistorySelected = true;
 
     }
 
@@ -490,6 +530,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapHeaderView.setOnMapHeaderViewClickListener(this);
 
         mShareContainer.setOnClickListener(this);
+        mFavoriteBtn.setOnClickListener(this);
         // 注册高德地图分享回调
         mShareSearch.setOnShareSearchListener(this);
         // 头部返回
@@ -505,9 +546,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSearchAdapter.setOnItemClickListener(this);
         // 搜索历史
         mSearchHistoryAdapter.setOnItemClickListener(this);
+        // 收藏
+        mFavoriteAdapter.setOnItemClickListener(this);
         // 回家和去公司
         mHome.setOnClickListener(this);
         mOffice.setOnClickListener(this);
+
+        mHistory.setOnClickListener(this);
+        mFavorite.setOnClickListener(this);
+//        mIvHistory.setOnClickListener(this);
+//        mIvFavorite.setOnClickListener(this);
 
         mAMapNavi.addAimlessModeListener(this);
 
@@ -1092,6 +1140,20 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        // 收藏
+        if(v == mFavoriteBtn){
+            if(isPoiFavorite){
+                SPUtil.delFavoriteAddress(mPoiFavorite);
+                mIvPoiFavorite.setSelected(false);
+                showToast("已取消收藏");
+            }else{
+                SPUtil.saveFavoriteAddress(mPoiFavorite);
+                mIvPoiFavorite.setSelected(true);
+                showToast("已收藏");
+            }
+            return;
+        }
+
         // 头部返回ImageButton
         if(v == mImgBtnBack){
             mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -1188,6 +1250,51 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }else{
                 showToast("请进入设置菜单设置公司的地址");
             }
+            return;
+        }
+
+        //搜索界面中的搜索历史和收藏
+        if(v==mHistory){
+            if(!isHistorySelected){
+                mIvHistory.setSelected(true);
+                isHistorySelected = true;
+                mIvFavorite.setSelected(false);
+                isFavoriteSelected = false;
+            }
+            hideFavoriteView();
+
+            //显示搜索历史记录
+            mHistoryList=SPUtil.getSearchHistory();
+            if(mHistoryList.size()>0){
+                mSearchHistoryData.clear();
+                mSearchHistoryData.addAll(mHistoryList);
+                // 刷新RecycleView
+                mSearchHistoryAdapter.notifyDataSetChanged();
+                showSearchHistoryView();
+            }
+
+            return;
+        }
+        if(v==mFavorite){
+            if(!isFavoriteSelected){
+                mIvFavorite.setSelected(true);
+                isFavoriteSelected = true;
+                mIvHistory.setSelected(false);
+                isHistorySelected = false;
+            }
+
+            //显示收藏记录
+            mFavoriteList=SPUtil.getFavoriteAddress();
+            if(mFavoriteList.size()>0){
+                mFavoriteData.clear();
+                mFavoriteData.addAll(mFavoriteList);
+                // 刷新RecycleView
+                mFavoriteAdapter.notifyDataSetChanged();
+            }else{
+                showToast("暂无收藏地址");
+            }
+            showFavoriteView();
+
             return;
         }
 
@@ -1674,6 +1781,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mTvLocTitle.setText(poiName);
             mTvLocation.setText(String.format("距离您%s", distanceStr));
         }
+
+        mPoiFavorite = poiName+","+latLng.latitude+","+latLng.longitude;
+        if(SPUtil.isFavoriteAddress(mPoiFavorite)){
+            mIvPoiFavorite.setSelected(true);
+            isPoiFavorite = true;
+        }else{
+            mIvPoiFavorite.setSelected(false);
+            isPoiFavorite = false;
+        }
     }
 
     private void addPOIMarker(LatLng latLng) {
@@ -1764,7 +1880,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
     /**
-     * 隐藏搜索提示布局
+     * 隐藏搜索历史和收藏布局
      */
     private void hideSearchHistoryView(){
         //mLLSearchHistoryContainer.setVisibility(View.GONE);
@@ -1772,6 +1888,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSearchHistoryAdapter.notifyDataSetChanged();
 
         mRecycleViewSearchHistory.setVisibility(View.GONE);
+        mRecycleViewFavorite.setVisibility(View.GONE);
         mRecycleViewSearch.setVisibility(View.VISIBLE);
     }
 
@@ -1781,8 +1898,29 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private void showSearchHistoryView(){
         //mLLSearchHistoryContainer.setVisibility(View.VISIBLE);
         mRecycleViewSearchHistory.setVisibility(View.VISIBLE);
+        mRecycleViewFavorite.setVisibility(View.VISIBLE);
         mRecycleViewSearch.setVisibility(View.GONE);
+    }
 
+    /**
+     * 隐藏收藏布局
+     */
+    private void hideFavoriteView(){
+        //mLLSearchHistoryContainer.setVisibility(View.GONE);
+        mFavoriteData.clear();
+        mFavoriteAdapter.notifyDataSetChanged();
+
+        mRecycleViewFavorite.setVisibility(View.GONE);
+        mRecycleViewSearchHistory.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 显示收藏布局
+     */
+    private void showFavoriteView(){
+        //mLLSearchHistoryContainer.setVisibility(View.VISIBLE);
+        mRecycleViewFavorite.setVisibility(View.VISIBLE);
+        mRecycleViewSearchHistory.setVisibility(View.GONE);
     }
 
 
@@ -1877,6 +2015,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onItemClick(View v, int position) {
+
         if(mSearchData != null && mSearchData.size() > 0){
             Tip tip = mSearchData.get(position);
             if(tip == null){
@@ -1917,6 +2056,26 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
             //存储搜索记录
             SPUtil.saveSearchHistory(historyAddressStr);
+        }
+    }
+
+    @Override
+    public void onFavoriteItemClick(View v, int position) {
+        if(mFavoriteData != null && mFavoriteData.size() > 0){
+            String favoriteAddressStr = mFavoriteData.get(position);
+            if(favoriteAddressStr == null){
+                return;
+            }
+            hideSearchTipView();
+            showMapView();
+            mMoveToCenter = false;
+            isPoiClick = true;
+            String[] favoriteAddressStrs=favoriteAddressStr.split(",");
+            LatLng latLng = new LatLng(Double.parseDouble(favoriteAddressStrs[1]), Double.parseDouble(favoriteAddressStrs[2]));
+            mClickPoiLatLng=latLng;
+            addPOIMarderAndShowDetail(latLng, favoriteAddressStrs[0]);
+            showClickPoiDetail(latLng, favoriteAddressStrs[0]);
+
         }
     }
 
@@ -2101,6 +2260,81 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         TextView tvSearchTitle;
         TextView tvSearchLoc;
         public SearchHistoryViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSearchTitle = itemView.findViewById(R.id.tv_search_title);
+            tvSearchLoc = itemView.findViewById(R.id.tv_search_loc);
+        }
+    }
+
+    /**
+     * 收藏Adapter
+     */
+    private static class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> implements View.OnClickListener {
+
+        private List<String> mData;
+        private OnFavoriteItemClickListener mListener;
+
+        public FavoriteAdapter(List<String> data) {
+            this.mData = data;
+        }
+
+        /**
+         * 设置RecycleView条目点击
+         * @param listener
+         */
+        public void setOnItemClickListener(OnFavoriteItemClickListener listener){
+            this.mListener = listener;
+        }
+
+        @NonNull
+        @Override
+        public FavoriteViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+            View itemView = ((LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                    .inflate(R.layout.search_tip_recycle_item, viewGroup, false);
+            itemView.setTag(position);
+            itemView.setOnClickListener(this);
+            return new FavoriteViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull FavoriteViewHolder holder, int position) {
+            String str = mData.get(position);
+            String[] strs=str.split(",");
+            if(strs.length==4){
+                holder.tvSearchTitle.setText(strs[0]);
+                holder.tvSearchLoc.setText(strs[3]);
+            }else{
+                holder.tvSearchTitle.setText(strs[0]);
+                holder.tvSearchLoc.setText(strs[0]);
+            }
+            holder.itemView.setTag(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            if(mData != null && mData.size() > 0){
+                return mData.size();
+            }
+            return 0;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v != null && mListener != null){
+                int postion = (int) v.getTag();
+                mListener.onFavoriteItemClick(v, postion);
+            }
+        }
+    }
+
+
+    /**
+     * 搜索历史ViewHolder
+     */
+    private static class FavoriteViewHolder extends RecyclerView.ViewHolder{
+        TextView tvSearchTitle;
+        TextView tvSearchLoc;
+        public FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSearchTitle = itemView.findViewById(R.id.tv_search_title);
             tvSearchLoc = itemView.findViewById(R.id.tv_search_loc);
