@@ -1,5 +1,6 @@
 package com.jiyouliang.fmap;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.PowerManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -126,6 +128,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         OnFavoriteItemClickListener,
         AimlessModeListener {
     private static final String TAG = "MapActivity";
+
+    private PowerManager.WakeLock mWakeLock;
     /**
      * 首次进入申请定位、sd卡权限
      */
@@ -250,6 +254,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     private AMapNavi mAMapNavi;
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -263,6 +268,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             e.printStackTrace();
         }
         setListener();
+
+        PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "cn");
 
     }
 
@@ -992,6 +1000,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView.onPause();
         mLocationOption.setInterval(20000);//定位时间间隔，默认2000ms
         mLocationClient.setLocationOption(mLocationOption);
+
+        mWakeLock.release();
     }
 
     @Override
@@ -1036,6 +1046,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mAMapNavi.stopAimlessMode();
             mAMapNavi.destroy();
         }
+
+        mWakeLock.release();
 
         // leakcanary检测
 
@@ -1300,10 +1312,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         //电子眼按钮
         if(v == mEleEyeView){
+            mWakeLock.acquire();
             mMapMode=MapMode.AIMLESS;
             hideHeadBottomView();
             mAMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
             mAMapNavi.setUseInnerVoice(true,false);
+            mAMapNavi.playTTS("进入巡航模式，为您持续监测电子眼信息",false);
             mAMap.removeOnPOIClickListener(this);
             if(mLatLng!=null){
                 mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 18));
@@ -1331,9 +1345,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         //退出电子眼
         if(v == mAimlessExit){
+            mWakeLock.release();
             mMapMode=MapMode.NORMAL;
             showHeadBottomView();
             mAMapNavi.stopAimlessMode();
+            mAMapNavi.playTTS("退出巡航模式",false);
             mAMap.addOnPOIClickListener(this);
             if(mLatLng!=null){
                 mAMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 16));
@@ -2091,8 +2107,35 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onUpdateAimlessModeElecCameraInfo(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        showToast("onUpdateAimlessModeElecCameraInfo");
+        mAMap.clear();
+        resetLocationMarker();
+        for(AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos){
+            switch (info.getBroadcastType()){
+                case 4:
+                case 5:
+                case 28:
+                case 29:
+                case 92:
+                case 93:
+                case 94:
+                    addCameraMarker(new LatLng(info.getCoorY(),info.getCoorX()));
+                    break;
+                default:
+                    break;
+            }
 
+        }
+
+    }
+
+    private void addCameraMarker(LatLng latlng) {
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+                R.drawable.icon_camera)));
+        markerOptions.anchor(0.5f, 0.5f);
+        markerOptions.position(latlng);
+        mAMap.addMarker(markerOptions);
     }
 
     @Override
