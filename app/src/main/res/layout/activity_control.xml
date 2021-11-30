@@ -99,20 +99,28 @@
         app:layout_constraintTop_toBottomOf="@id/ll_container2_control"
         >
 
-        <com.jiyouliang.fmap.view.map.DrawView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/radius_4_bg"/>
+
+<!--        <com.jiyouliang.fmap.view.map.DrawView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:background="@drawable/radius_4_bg"/>-->
+
+        <com.jiyouliang.fmap.view.widget.RemoteControllerView
+            android:id="@+id/rcv_view"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginLeft="@dimen/padding_big"
+            app:rcv_text_size="25sp"/>
 
         <com.jiyouliang.fmap.view.widget.VerticalSeekBar
             android:id="@+id/vsb_zoom"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="30dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="50dp"
             android:max="20"
@@ -124,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="42dp"
+            android:layout_marginRight="20dp"
             android:src="@drawable/zoom_in" />
 
         <ImageView
@@ -133,10 +141,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="42dp"
+            android:layout_marginRight="20dp"
             android:layout_below="@id/vsb_zoom"/>
-
-
 
     </RelativeLayout>
 

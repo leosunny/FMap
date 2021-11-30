@@ -12,9 +12,17 @@ public interface OnControlListener {
 
     void alongSearch();
 
-    void draw();
-
     void zoomIn();
 
     void zoomOut();
+
+    void topClick();
+
+    void leftClick();
+
+    void rightClick();
+
+    void bottomClick();
+
+    void centerOkClick();
 }

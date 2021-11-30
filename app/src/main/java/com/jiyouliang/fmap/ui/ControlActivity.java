@@ -1,6 +1,5 @@
 package com.jiyouliang.fmap.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,14 +8,15 @@ import android.widget.ImageView;
 import com.jiyouliang.fmap.MapApplication;
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.ControlEventUtils;
-import com.jiyouliang.fmap.view.widget.TopTitleView;
+import com.jiyouliang.fmap.view.widget.RemoteControllerView;
 
 public class ControlActivity extends BaseActivity implements View.OnClickListener,
-        TopTitleView.OnTopTitleViewClickListener {
+        RemoteControllerView.OnRemoteControllerClickListener {
 
     private ControlEventUtils mControlEventUtils;
     private ImageView mIvZoomIn;
     private ImageView mIvZoomOut;
+    private RemoteControllerView mRemoteControllerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class ControlActivity extends BaseActivity implements View.OnClickListene
     private void initView(){
         mIvZoomIn = (ImageView) findViewById(R.id.iv_zoom_in);
         mIvZoomOut = (ImageView) findViewById(R.id.iv_zoom_out);
+        mRemoteControllerView = (RemoteControllerView) findViewById(R.id.rcv_view);
     }
 
     private void initData(){
@@ -39,6 +40,7 @@ public class ControlActivity extends BaseActivity implements View.OnClickListene
     private void setListener(){
         mIvZoomIn.setOnClickListener(this);
         mIvZoomOut.setOnClickListener(this);
+        mRemoteControllerView.setRemoteControllerClickListener(this);
     }
 
     @Override
@@ -55,12 +57,27 @@ public class ControlActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
-    public void onLeftClick(View v) {
-
+    public void topClick() {
+        mControlEventUtils.topClick();
     }
 
     @Override
-    public void onRightClick(View v) {
+    public void leftClick() {
+        mControlEventUtils.leftClick();
+    }
 
+    @Override
+    public void rightClick() {
+        mControlEventUtils.rightClick();
+    }
+
+    @Override
+    public void bottomClick() {
+        mControlEventUtils.bottomClick();
+    }
+
+    @Override
+    public void centerOkClick() {
+        mControlEventUtils.centerOkClick();
     }
 }

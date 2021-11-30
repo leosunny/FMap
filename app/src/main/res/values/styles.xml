@@ -178,5 +178,14 @@
         <item name="android:background">@color/navpage</item>
     </style>
 
+    <style name="def_remote_controller">
+        <item name="rcv_text_color">#A9D9F5</item>
+        <item name="rcv_shadow_color">#A9D9F5</item>
+        <item name="rcv_stroke_color">#A9D9F5</item>
+        <item name="rcv_text_size">14sp</item>
+        <item name="rcv_stroke_width">1px</item>
+        <item name="rcv_oval_degree">90</item>
+    </style>
+
 </resources>
 
