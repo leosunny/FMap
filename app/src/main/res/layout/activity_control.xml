@@ -42,21 +42,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_loc_unlock_icon"
-            app:vitTitle="@string/user_detail_loc_unlock" />
+            app:vitTitle="避开前路" />
 
         <com.jiyouliang.fmap.view.widget.VerticalIconTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_add_loc_icon"
-            app:vitTitle="@string/user_detail_add_loc" />
+            app:vitTitle="路线全览" />
 
         <com.jiyouliang.fmap.view.widget.VerticalIconTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_add_merchant_icon"
-            app:vitTitle="@string/user_detail_add_merchant" />
+            app:vitTitle="路线刷新" />
 
     </LinearLayout>
 
@@ -74,21 +74,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_loc_unlock_icon"
-            app:vitTitle="@string/user_detail_loc_unlock" />
+            app:vitTitle="语音播报" />
 
         <com.jiyouliang.fmap.view.widget.VerticalIconTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_add_loc_icon"
-            app:vitTitle="@string/user_detail_add_loc" />
+            app:vitTitle="沿途搜" />
 
         <com.jiyouliang.fmap.view.widget.VerticalIconTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:vitIcon="@drawable/user_detail_add_merchant_icon"
-            app:vitTitle="@string/user_detail_add_merchant" />
+            app:vitTitle="更多" />
 
     </LinearLayout>
 
@@ -108,14 +108,35 @@
             android:background="@drawable/radius_4_bg"/>
 
         <com.jiyouliang.fmap.view.widget.VerticalSeekBar
+            android:id="@+id/vsb_zoom"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="50dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:max="20"
             android:progress="10" />
+
+        <ImageView
+            android:id="@+id/iv_zoom_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="42dp"
+            android:src="@drawable/zoom_in" />
+
+        <ImageView
+            android:id="@+id/iv_zoom_out"
+            android:src="@drawable/zoom_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="42dp"
+            android:layout_below="@id/vsb_zoom"/>
+
+
 
     </RelativeLayout>
 
