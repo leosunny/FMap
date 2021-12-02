@@ -51,6 +51,7 @@ public class RemoteControllerView extends View {
     private Paint rcvShadowPaint;
     private Paint rcvStrokePaint;
     private Paint rcvWhitePaint;
+    private Paint rcvLinePaint;
 
 
     private RectF ovalRectF;
@@ -186,6 +187,14 @@ public class RemoteControllerView extends View {
         }
         canvas.drawCircle(0, 0, Math.min(rcvViewWidth, rcvViewHeight) * SCALE_OF_SMALL_CIRCLE / 2, rcvStrokePaint);
         canvas.drawText("定位", textPointInView.x, textPointInView.y, rcvTextPaint);
+
+        float radiusSmall = (float) ((Math.min(rcvViewWidth, rcvViewHeight) * SCALE_OF_SMALL_CIRCLE / 2)/Math.sqrt(2));
+        float radiusBig = (float)((Math.min(rcvViewWidth, rcvViewHeight) / 2)/Math.sqrt(2));
+
+        canvas.drawLine(radiusSmall,radiusSmall,radiusBig,radiusBig,rcvLinePaint);
+        canvas.drawLine(radiusSmall,-radiusSmall,radiusBig,-radiusBig,rcvLinePaint);
+        canvas.drawLine(-radiusSmall,-radiusSmall,-radiusBig,-radiusBig,rcvLinePaint);
+        canvas.drawLine(-radiusSmall,radiusSmall,-radiusBig,radiusBig,rcvLinePaint);
     }
 
     @Override
@@ -276,8 +285,9 @@ public class RemoteControllerView extends View {
     private void initPaints() {
         rcvTextPaint = creatPaint(rcvTextColor, rcvTextSize, Paint.Style.FILL, 0);
         rcvShadowPaint = creatPaint(rcvShadowColor, 0, Paint.Style.FILL, 0);
-        rcvStrokePaint = creatPaint(rcvStrokeColor, 0, Paint.Style.STROKE, 0);
+        rcvStrokePaint = creatPaint(rcvStrokeColor, 0, Paint.Style.STROKE, 4);
         rcvWhitePaint = creatPaint(Color.WHITE, 0, Paint.Style.FILL, 0);
+        rcvLinePaint = creatPaint(rcvStrokeColor,0,Paint.Style.STROKE, 2);
     }
 
 
