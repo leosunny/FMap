@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.listener;
+package com.jiyouliang.fmap;
 
 import android.view.View;
 

@@ -23,11 +23,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.PowerManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +71,6 @@ import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
-import com.jiyouliang.fmap.listener.MapNaviListner;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.ControlActivity;
 import com.jiyouliang.fmap.ui.SettingActivity;
@@ -89,6 +86,7 @@ import com.jiyouliang.fmap.view.base.MapViewInterface;
 import com.jiyouliang.fmap.view.map.AimlessBarView;
 import com.jiyouliang.fmap.view.map.EleEyeView;
 import com.jiyouliang.fmap.view.map.GPSView;
+import com.jiyouliang.fmap.view.map.GroupTeamView;
 import com.jiyouliang.fmap.view.map.MapHeaderView;
 import com.jiyouliang.fmap.view.map.NearbySearchView;
 import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
@@ -244,13 +242,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private List<String> mFavoriteData = new ArrayList<>();
     private List<String> mFavoriteList = new ArrayList<>();
 
-
     private LinearLayout mHistory;
     private LinearLayout mFavorite;
     private ImageView mIvHistory;
     private ImageView mIvFavorite;
     private boolean isHistorySelected = false;
     private boolean isFavoriteSelected = false;
+
+    private GroupTeamView mGroupTeamView;
 
     private AMapNavi mAMapNavi;
 
@@ -287,6 +286,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAMap.setTrafficEnabled(true);
         //电子眼
         mEleEyeView=(EleEyeView)findViewById(R.id.etv);
+        //Test
+        mGroupTeamView=(GroupTeamView)findViewById(R.id.gtv);
 
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
@@ -440,6 +441,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
         if(mEleEyeView !=null){
             mEleEyeView.setOnClickListener(this);
+        }
+        if(mGroupTeamView !=null){
+            mGroupTeamView.setOnClickListener(this);
         }
 
         if (null != mPoiColseView) {
@@ -1379,6 +1383,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        if(v == mGroupTeamView){
+
+            return;
+        }
+
     }
 
     /**
@@ -2149,23 +2158,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
 
     /**
-     * 地图模式
-     */
-    private enum MapMode{
-        /**
-         * 普通模式:显示地图图层
-         */
-        NORMAL,
-
-        /**
-         * 搜索模式:显示搜索提示和搜索结果
-         */
-        SEARCH,
-
-        AIMLESS
-    }
-
-    /**
      * 搜索Adapter
      */
     public static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implements View.OnClickListener {
@@ -2382,7 +2374,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             tvSearchTitle = itemView.findViewById(R.id.tv_search_title);
             tvSearchLoc = itemView.findViewById(R.id.tv_search_loc);
         }
-    }
+    } 
 
 
     /**

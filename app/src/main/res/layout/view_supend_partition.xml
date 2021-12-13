@@ -26,11 +26,11 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv" />
 
-<!--    <com.jiyouliang.fmap.view.map.GroupTeamView-->
-<!--        android:id="@+id/gtv"-->
-<!--        style="@style/IconViewStyle"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/ctv" />-->
+    <com.jiyouliang.fmap.view.map.GroupTeamView
+        android:id="@+id/gtv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etv" />
 
 <!--    <com.jiyouliang.fmap.view.map.ReportView-->
 <!--        android:id="@+id/rv"-->
